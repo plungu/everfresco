@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+   	<bean id="everfrescoBehavior" class="com.support.behavior.SyncNode" init-method="init">
+		<property name="nodeService">
+		    <ref bean="nodeService" />
+		</property>
+		<property name="policyComponent">
+		    <ref bean="policyComponent" />
+		</property>
+		<property name="siteService">
+		    <ref bean="siteService" />
+		</property>
+		 <property name="authorityService">
+		    <ref bean="authorityService" />
+		</property>
+	</bean>
+		
+	<bean id="everfrescoResourceBundles" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">
+		<property name="resourceBundles">
+		   	<list>
+		   		<value>alfresco.messages.everfresco</value>
+			</list>
+		</property>
+	</bean>
+		
+	<bean id="webscript.com.support.everfresco.applyEverfrescoAspect.post"
+          class="com.support.webscript.ApplyEverfrescoAspect" parent="webscript">
+
+        <property name="nodeService">
+            <ref bean="NodeService"/>
+        </property>
+    </bean>
+
+	<bean id="webscript.com.support.everfresco.removeEverfrescoAspect.post"
+          class="com.support.webscript.RemoveEverfrescoAspect" parent="webscript">
+
+        <property name="nodeService">
+            <ref bean="NodeService"/>
+        </property>
+    </bean>
+	
+</beans>

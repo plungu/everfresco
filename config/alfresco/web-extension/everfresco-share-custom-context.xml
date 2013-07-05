@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	<bean id="everfrescoResourceBundles" class="org.alfresco.i18n.ResourceBundleBootstrapComponent">
+		<property name="resourceBundles">
+		   	<list>
+		   		<value>alfresco.messages.everfresco</value>
+			</list>
+		</property>
+	</bean>
+
+    <!-- Override WebScript Messages - add slingshot application messages -->
+    <bean id="webscripts.resources" class="org.springframework.extensions.surf.util.ResourceBundleBootstrapComponent">
+        <property name="resourceBundles">
+            <list>
+	            <value>webscripts.messages.webscripts</value>
+	            <value>alfresco.messages.common</value>
+	            <value>alfresco.messages.slingshot</value>
+		   		<value>alfresco.messages.everfresco</value>
+            </list>
+        </property>
+    </bean>
+   
+    <bean id="webframework.factory.user.everfresco" class="com.support.share.EverfrescoUserFactory" parent="webframework.factory.base" />
+	
+	<bean id="support.evaluator.doclib.action.evernote"          
+		class="com.support.evaluator.IsEvernoteSyncableEvaluator" />
+	
+</beans>
