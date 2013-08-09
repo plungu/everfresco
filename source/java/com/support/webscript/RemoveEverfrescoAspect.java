@@ -6,6 +6,7 @@ import java.util.Map;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.QName;
+import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.springframework.extensions.webscripts.AbstractWebScript;
@@ -19,6 +20,8 @@ import com.support.model.EverfrescoModel;
 
 public class RemoveEverfrescoAspect extends AbstractWebScript {
 
+	Logger log = Logger.getLogger(this.getClass()); 
+	
 	private NodeService nodeService;
 	
 	public void setNodeService(NodeService nodeService) {
@@ -29,13 +32,14 @@ public class RemoveEverfrescoAspect extends AbstractWebScript {
 	public void execute(WebScriptRequest req, WebScriptResponse res)
 			throws IOException {
 	
-		System.out.println("************ Execute Everfresco Webscript *************");
+		log.info("************ Executing Everfresco Webscript *************");
+
 		try
     	{
 	    	String nodeRefStr = req.getParameter("nodeRef");
 	    	NodeRef nodeRef = new NodeRef(nodeRefStr);
 	    	nodeService.removeAspect(nodeRef, EverfrescoModel.ASPECT_EVERFRESCO_SYNCABLE);
-	    	System.out.println("******** Remove Everfresco Aspect **********");
+			log.info("************ Removing Everfresco Aspect *************");
 			
 			// build a json object
 //	    	JSONObject obj = new JSONObject();

@@ -2,6 +2,7 @@ package com.support.evaluator;
 
 import org.alfresco.error.AlfrescoRuntimeException;
 import org.alfresco.web.evaluator.BaseEvaluator;
+import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 /*
@@ -11,6 +12,9 @@ import org.json.simple.JSONObject;
  * Use: evaluate if the everfresco aspect is applied to node
  */
 public class IsEvernoteSyncableEvaluator extends BaseEvaluator {
+	
+	Logger log = Logger.getLogger(this.getClass()); 
+
 	private static final String ASPECT_EVERFRESCO = "ef:syncable";
 	
 	/*
@@ -20,20 +24,23 @@ public class IsEvernoteSyncableEvaluator extends BaseEvaluator {
 	 */
 	@Override
 	public boolean evaluate(JSONObject jsonObject) {
-		
+		log.info("************ Executing Everfresco Evaluator *************");
+
         try {
         	JSONArray nodeAspects = getNodeAspects(jsonObject);
-        	System.out.println("********* Calling Evaluator: EverFresco ********* ");
+    		log.info("********* Calling EverFresco Evaluator on: "+jsonObject.get("name"));
         	
         	if (nodeAspects == null) {
                 return false;
             } else {
                 if (nodeAspects.contains(ASPECT_EVERFRESCO)) {
-                	System.out.println("********* Evaluator: EverFresco Aspect Applied ********* ");
+                	log.info("************ Evaluator: EverFresco Aspect Applied *************");
                 	
                     return true;
                 } else {
-                    return false;
+                	log.info("************ Evaluator: EverFresco Aspect Not Applied *************");
+
+                	return false;
                 }
             }
         } catch (Exception err) {

@@ -22,15 +22,17 @@ import org.apache.log4j.Logger;
 
 import com.support.model.EverfrescoModel;
 
-public class SyncNode implements NodeServicePolicies.OnAddAspectPolicy, NodeServicePolicies.OnUpdateNodePolicy { 
+public class SyncNode implements NodeServicePolicies.OnAddAspectPolicy, NodeServicePolicies.OnUpdateNodePolicy, NodeServicePolicies.OnRemoveAspectPolicy { 
 
+	Logger log = Logger.getLogger(this.getClass()); 
+	
 	// Dependencies
     private NodeService nodeService;
     private PolicyComponent policyComponent;
     private SiteService siteService;
     private AuthorityService authorityService;
     private ImporterModuleComponent importerModuleComponent;
-    private Logger logger = Logger.getLogger(SyncNode.class);
+
     // Behaviours
     private Behaviour onUpdateNode;
     private Behaviour onAddAspect;
@@ -38,7 +40,7 @@ public class SyncNode implements NodeServicePolicies.OnAddAspectPolicy, NodeServ
     
     public void init() {
 
-		System.out.println("********* Initialize everfresco sync Behavior ********* ");
+		log.info("************ Initialize everfresco sync Behavior *************");
     	
         // Create behaviours
         this.onAddAspect = new JavaBehaviour(this, "onAddAspect", NotificationFrequency.TRANSACTION_COMMIT);
@@ -54,14 +56,20 @@ public class SyncNode implements NodeServicePolicies.OnAddAspectPolicy, NodeServ
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
 		// TODO Auto-generated method stub
-		System.out.println("********* everfresco sync Behavior on add aspect********* ");
+		log.info("************ Calling: Everfresco sync Behavior on add aspect *************");
     	sync(nodeRef);		
 	}
-    	
+    
+	@Override
+	public void onRemoveAspect(NodeRef nodeRef, QName aspectTypeQName)
+	{
+		log.info("************ Calling: Everfresco sync Behavior on remove aspect *************");		
+	}
+	
 	@Override
 	public void onUpdateNode(NodeRef nodeRef) {
 		// TODO Auto-generated method stub
-		System.out.println("********* everfresco sync Behavior on update node ********* ");
+		log.info("************ Calling: Everfresco sync Behavior on update node *************");
     	sync(nodeRef);		
 	}
 
