@@ -1,6 +1,0 @@
-<webscript>
-   <shortname>EverFresco</shortname>
-   <description>Displays Everfresco Synced Content</description>
-   <family>dashlet</family>
-   <url>/components/dashlets/hello-world</url>
-</webscript>

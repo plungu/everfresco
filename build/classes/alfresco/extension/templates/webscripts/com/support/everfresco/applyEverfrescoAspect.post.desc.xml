@@ -1,9 +1,0 @@
-<webscript>
-<shortname>Apply everfresco aspect</shortname>
-<description>Apply everfresco aspect</description>
-<url>/everfresco/applyEverfresco?nodeRef={nodeRef}</url>
-<!-- <format default="">argument</format> -->
-<authentication>user</authentication>
-<transaction>none</transaction>
-<family>Everfresco</family>
-</webscript>
