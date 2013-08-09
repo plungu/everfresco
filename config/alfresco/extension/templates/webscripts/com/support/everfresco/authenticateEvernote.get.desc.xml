@@ -1,0 +1,10 @@
+<webscript>
+<shortname>Authentiacte Evernote</shortname>
+<description>Authenticate Evernote</description>
+<url>/everfresco/authenticate?nodeRef={nodeRef}</url>
+<!-- <url>/everfresco/authenticate?nodeRef={nodeRef}&action={action}&oauth_token={oauth_token}&oauth_verifier={oauth_verifier}</url> -->
+<!-- <format default="">argument</format> -->
+<authentication>user</authentication>
+<transaction>none</transaction>
+<family>Everfresco</family>
+</webscript>

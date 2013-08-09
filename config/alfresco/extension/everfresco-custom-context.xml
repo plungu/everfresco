@@ -32,6 +32,7 @@
         <property name="nodeService">
             <ref bean="NodeService"/>
         </property>
+        <property ref="ChannelService" name="channelService" />
     </bean>
 
 	<bean id="webscript.com.support.everfresco.removeEverfrescoAspect.post"
@@ -41,5 +42,39 @@
             <ref bean="NodeService"/>
         </property>
     </bean>
+
+	<bean id="webscript.com.support.everfresco.authenticateEvernote.get"
+          class="com.support.webscript.oauth.authenticate.Evernote" parent="webscript">
+    </bean>
+
+	<bean id="webscript.com.support.everfresco.authenticateEvernoteStepByStep.get"
+          class="com.support.webscript.oauth.authenticate.EvernoteOAuthStepByStep" parent="webscript">
+          
+          <property name="oAuth2CredentialsStoreService">
+		    <ref bean="OAuth2CredentialsStoreService" />
+		</property>
+    </bean>
+
+	<bean id="webscript.com.support.everfresco.evernoteListNotebooks.get"
+          class="com.support.webscript.oauth.authenticate.EvernoteListNotebooks" parent="webscript">
+    </bean>
+	
+	<bean id="everfrescoChannelType" class="com.support.publishing.EverfrescoChannelType" parent="baseChannelType">
+		<property ref="NodeService" name="nodeService" />
+		<property ref="ContentService" name="contentService" />		
+	</bean>
+	
+	
+	
+<!--    <bean id="everfrescoPublishingHelper" class="org.alfresco.repo.publishing.facebook.FacebookPublishingHelper"> -->
+<!--       <property name="nodeService" ref="NodeService" /> -->
+<!--       <property name="connectionFactory" ref="facebookConnectionFactory" /> -->
+<!--       <property name="encryptor" ref="metadataEncryptor" /> -->
+<!--    </bean> -->
+
+<!--    <bean id="everfrescoConnectionFactory" class=""> -->
+<!--       <constructor-arg value="289427501067879" /> -->
+<!--       <constructor-arg value="8680cd45e7024a5aa078034ddc2fbb09" /> -->
+<!--    </bean> -->
 	
 </beans>

@@ -4,11 +4,25 @@
 	<imports>
 		<import uri="http://www.alfresco.org/model/content/1.0" prefix="cm" />
 		<import uri="http://www.alfresco.org/model/dictionary/1.0" prefix="d" />
+		<import uri="http://www.alfresco.org/model/publishing/1.0" prefix="pub" />
 	</imports>
 
 	<namespaces>
 		<namespace uri="http://www.alfresco.com/model/everfresco/1.0" prefix="ef" />
 	</namespaces>
+	
+	<types>
+      <type name="ef:DeliveryChannel">
+         <title>Everfresco Delivery Channel </title>
+         <description>Node type used to represent marklogic delivery channels </description>
+         <parent>pub:DeliveryChannel</parent>
+         <mandatory-aspects>
+            <aspect>ef:person</aspect>
+            <aspect>ef:syncable</aspect>
+            <aspect>ef:DeliveryChannelAspect</aspect>
+         </mandatory-aspects>
+      </type>
+   </types>
 	
 	<aspects>
 		<aspect name="ef:person">
@@ -48,6 +62,13 @@
 				</property>
 			</properties>
 		</aspect>
+		
+	  <aspect name="ef:DeliveryChannelAspect">
+         <title>Everfresco Delivery Channel Aspect</title>
+         <description>Applied to a node that represents a Everfresco delivery channel</description>
+         <parent>pub:OAuth2DeliveryChannelAspect</parent>
+      </aspect>
+  
 	</aspects>
 		
 </model>
