@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.crypto.SealedObject;
 import javax.servlet.http.HttpServletResponse;
 
 import org.alfresco.model.ContentModel;
@@ -215,8 +216,7 @@ public class EverfrescoChannelType extends AbstractChannelType {
 
     @Override
     public void publish(NodeRef nodeToPublish, Map channelProperties)
-    {
-        
+    {        
     	log.info("****** Publishing Node ***********" );
       	// To create a new note, simply create a new Note object and fill in 
         // attributes such as the note's title.
@@ -236,8 +236,17 @@ public class EverfrescoChannelType extends AbstractChannelType {
         
         ContentReader reader = contentService.getReader(nodeToPublish, ContentModel.PROP_CONTENT);
         String content = reader.getContentString();
-
-        note.setContent(content);
+        
+        // The content of an Evernote note is represented using Evernote Markup Language
+        // (ENML). The full ENML specification can be found in the Evernote API Overview
+        // at http://dev.evernote.com/documentation/cloud/chapters/ENML.php
+        String enmlContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">"
+            + "<en-note>" 
+            + content
+            + "</en-note>";
+        note.setContent(enmlContent);
+        
         log.info("****** Setting Content : " + originalMimeType );
         
         // Finally, send the new note to Evernote using the createNote method
@@ -252,17 +261,17 @@ public class EverfrescoChannelType extends AbstractChannelType {
 	        TBinaryProtocol noteStoreProt = new TBinaryProtocol(noteStoreTrans);
 	        NoteStore.Client noteStore = new NoteStore.Client(noteStoreProt, noteStoreProt);
 	        		
-	        String accessToken = channelProperties.get(PublishingModel.PROP_OAUTH2_TOKEN).toString();
-	        log.info("****** accessToken: " + accessToken );
-//	        accessToken = (String)getEncryptor().decrypt(PublishingModel.PROP_OAUTH2_TOKEN, accessToken);
-//	    	log.info("****** accessToken: " + accessToken );
+	        SealedObject sealedAccessToken = (SealedObject) channelProperties.get(PublishingModel.PROP_OAUTH2_TOKEN);
+	        log.info("****** sealedAccessToken: " + sealedAccessToken );
+	        String accessToken = (String)getEncryptor().decrypt(PublishingModel.PROP_OAUTH2_TOKEN, sealedAccessToken);
+	    	log.info("****** accessToken: " + accessToken );
 	        Note createdNote = noteStore.createNote(accessToken, note);
 	        String newNoteGuid = createdNote.getGuid();
-	        
 	        log.info("****** newNoteGuid: " + newNoteGuid );
 	        
 	    	nodeService.addAspect(nodeToPublish, EverfrescoModel.ASPECT_EVERFRESCO_SYNCABLE, null);
-    	
+	    	log.info("************ Applying Everfresco Aspect *************");
+			 
         } catch (Exception e){
         	e.printStackTrace();
         	log.error("Error Creating Note: "+note.getTitle());

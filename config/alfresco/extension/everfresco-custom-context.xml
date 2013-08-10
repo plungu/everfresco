@@ -29,10 +29,9 @@
 	<bean id="webscript.com.support.everfresco.applyEverfrescoAspect.post"
           class="com.support.webscript.ApplyEverfrescoAspect" parent="webscript">
 
-        <property name="nodeService">
-            <ref bean="NodeService"/>
-        </property>
-        <property ref="ChannelService" name="channelService" />
+        <property name="nodeService" ref="NodeService"/>
+        <property name="channelService" ref="channelService" />
+      	<property name="encryptor" ref="metadataEncryptor" />        
     </bean>
 
 	<bean id="webscript.com.support.everfresco.removeEverfrescoAspect.post"
