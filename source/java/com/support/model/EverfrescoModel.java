@@ -15,7 +15,10 @@ public class EverfrescoModel {
 	public static final QName PROPERTY_EVERFRESCO_NODE_ID = QName.createQName("http://www.alfresco.com/model/everfresco/1.0", "nodeId");
 	public static final QName PROPERTY_EVERFRESCO_LAST_SYNC = QName.createQName("http://www.alfresco.com/model/everfresco/1.0", "lastSync");
 	public static final QName PROPERTY_EVERFRESCO_SYNCED = QName.createQName("http://www.alfresco.com/model/everfresco/1.0", "synced");
-	 
+	
+	public static final QName TYPE_EVERFRESCO_DELIVERY_CHANNEL = QName.createQName(" http://www.alfresco.com/model/everfresco/1.0}", "DeliveryChannel");
+	
+	
 //	private QName property;
 // 
 //	private EverfrescoModel(QName qname) {

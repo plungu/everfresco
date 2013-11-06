@@ -7,6 +7,7 @@ import java.security.MessageDigest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.crypto.SealedObject;
 import javax.servlet.http.HttpServletResponse;
@@ -17,6 +18,8 @@ import org.alfresco.repo.publishing.PublishingModel;
 import org.alfresco.service.cmr.publishing.channels.Channel;
 import org.alfresco.service.cmr.publishing.channels.ChannelType.AuthStatus;
 import org.alfresco.service.cmr.publishing.channels.ChannelType.AuthUrlPair;
+import org.alfresco.service.cmr.repository.AssociationRef;
+import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentData;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -269,14 +272,25 @@ public class EverfrescoChannelType extends AbstractChannelType {
 	        String newNoteGuid = createdNote.getGuid();
 	        log.info("****** newNoteGuid: " + newNoteGuid );
 	        
+	        List<AssociationRef> assRefs = nodeService.getTargetAssocs(nodeToPublish, PublishingModel.ASSOC_SOURCE);
+	        if(assRefs != null && !assRefs.isEmpty())
+	        {
+	        	NodeRef source = assRefs.get(0).getTargetRef();
+	        	nodeToPublish = source;
+	        }
+	        	
 	    	nodeService.addAspect(nodeToPublish, EverfrescoModel.ASPECT_EVERFRESCO_SYNCABLE, null);
-	    	log.info("************ Applying Everfresco Aspect *************");
-			 
+	    	Set<QName> aspects = nodeService.getAspects(nodeToPublish);
+	    	for(QName aspect : aspects){
+	    		log.info("************ "+aspect.getLocalName()+" *************");
+	    	}
+	    	log.info("************ Applied Everfresco Aspect *************");
+	    	
         } catch (Exception e){
         	e.printStackTrace();
         	log.error("Error Creating Note: "+note.getTitle());
             
-        }
+        }        
         
     }
     

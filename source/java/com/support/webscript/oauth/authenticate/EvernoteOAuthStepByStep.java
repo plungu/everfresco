@@ -67,13 +67,6 @@ public class EvernoteOAuthStepByStep extends DeclarativeWebScript {
 	static final String REQ_PARAM_OAUTH_TOKEN = "oauth_token";
 	static final String REQ_PARAM_OAUTH_VERIFIER = "oauth_verifier";
 
-	OAuth2CredentialsStoreService oAuth2CredentialsStoreService;
-	
-	public void setoAuth2CredentialsStoreService(
-			OAuth2CredentialsStoreService oAuth2CredentialsStoreService) {
-		this.oAuth2CredentialsStoreService = oAuth2CredentialsStoreService;
-	}
-
 	@Override
 	public Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) 
 	{
@@ -87,9 +80,7 @@ public class EvernoteOAuthStepByStep extends DeclarativeWebScript {
 		  String requestTokenSecret = (String)session.getValue(SESSION_REQUEAT_TOKEN_SECRET);
 		  String verifier = (String)session.getValue(SESSION_VERIFIER);
 		  String noteStoreUrl = (String)session.getValue(SESSION_NOTE_STORE_URL);
-		  
-		  //oAuth2CredentialsStoreService.storePersonalOAuth2Credentials("", accessToken, requestToken, new Date(36000000), new Date());
-		  
+		  		  
 		  //Check the request action to see what to do next
 		  String action = req.getParameter(REQ_PARAM_ACTION);
 		  
