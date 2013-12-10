@@ -6,7 +6,8 @@
     <property name="build.dir" value="${project.dir}/build"/>
     <property name="config.dir" value="${project.dir}/config"/>
     <property name="jar.file" value="${build.dir}/lib/everfresco.jar"/>
-    <property name="amp.file" value="${build.dir}/dist/everfresco.amp"/>
+    <property name="amp.repo" value="${build.dir}/dist/everfresco_repo.amp"/>
+    <property name="amp.share" value="${build.dir}/dist/everfresco_share.amp"/>
 	
     <target name="mkdirs">
         <mkdir dir="${build.dir}/dist" />
@@ -28,11 +29,24 @@
             <fileset dir="${build.dir}/classes" excludes="**/custom*,**/*Test*" includes="**/*.class" />
         </jar>
     </target>
-	
-    <target name="package-amp" depends="mkdirs, package-jar" description="Package the Module" >
-        <zip destfile="${amp.file}" >
+
+    <target name="package-share-amp" depends="mkdirs" description="Package the Module" >
+        <zip destfile="${amp.share}" >
+            <fileset dir="${project.dir}/source" includes="web/**/*.*" />
+            <fileset dir="${project.dir}" includes="lib/*.jar" />
             <fileset dir="${project.dir}/build" includes="lib/*.jar" />
-            <fileset dir="${project.dir}" includes="config/**/*.*" excludes="**/module.properties" />
+            <fileset dir="${project.dir}" includes="config/alfresco/web-extension/**/*.*"  />
+            <fileset dir="${project.dir}/config/alfresco/module/everfresco" includes="module.properties" />
+        </zip>
+    </target>
+
+    <target name="package-amp" depends="mkdirs, package-jar, package-share-amp" description="Package the Module" >
+        <zip destfile="${amp.repo}" >
+            <fileset dir="${project.dir}/source" includes="web/**/*.*" />
+            <fileset dir="${project.dir}" includes="lib/*.jar" />
+            <fileset dir="${project.dir}/build" includes="lib/*.jar" />
+            <fileset dir="${project.dir}" includes="config/alfresco/messages/**/*.*" excludes="" />
+            <fileset dir="${project.dir}" includes="config/alfresco/extension/**/*.*" excludes="" />
             <fileset dir="${project.dir}/config/alfresco/module/everfresco" includes="module.properties" />
         </zip>
     </target>
@@ -41,7 +55,7 @@
         <echo>Installing SDK Demo AMP into WAR</echo>
         <java dir="." fork="true" classname="org.alfresco.repo.module.tool.ModuleManagementTool">
             <classpath refid="class.path" />
-            <arg line="install ${amp.file} ${war.file} -force -verbose"/>
+            <arg line="install ${amp.repo} ${war.file} -force -verbose"/>
         </java>
     </target>
 
