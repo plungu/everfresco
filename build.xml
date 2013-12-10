@@ -5,8 +5,8 @@
     <property name="project.dir" value="."/>
     <property name="build.dir" value="${project.dir}/build"/>
     <property name="config.dir" value="${project.dir}/config"/>
-    <property name="jar.file" value="${build.dir}/lib/alfresco-sdk-custom-service.jar"/>
-    <property name="amp.file" value="${build.dir}/dist/alfresco-sdk-custom-service.amp"/>
+    <property name="jar.file" value="${build.dir}/lib/everfresco.jar"/>
+    <property name="amp.file" value="${build.dir}/dist/everfresco.amp"/>
 	
     <target name="mkdirs">
         <mkdir dir="${build.dir}/dist" />
@@ -33,7 +33,7 @@
         <zip destfile="${amp.file}" >
             <fileset dir="${project.dir}/build" includes="lib/*.jar" />
             <fileset dir="${project.dir}" includes="config/**/*.*" excludes="**/module.properties" />
-            <fileset dir="${project.dir}/config/alfresco/module/sdkDemoAmp" includes="module.properties" />
+            <fileset dir="${project.dir}/config/alfresco/module/everfresco" includes="module.properties" />
         </zip>
     </target>
 
