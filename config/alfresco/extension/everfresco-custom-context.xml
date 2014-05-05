@@ -31,7 +31,8 @@
 
         <property name="nodeService" ref="NodeService"/>
         <property name="channelService" ref="channelService" />
-      	<property name="encryptor" ref="metadataEncryptor" />        
+      	<property name="encryptor" ref="metadataEncryptor" />
+      	<property name="wikiService" ref="WikiService" />        
     </bean>
 
 	<bean id="webscript.com.support.everfresco.removeEverfrescoAspect.post"

@@ -1,6 +1,7 @@
 package com.support.publishing;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.Serializable;
 import java.security.MessageDigest;
@@ -78,6 +79,16 @@ public class EverfrescoChannelType extends AbstractChannelType {
 	static final String REQ_PARAM_OAUTH_TOKEN = "oauth_token";
 	static final String REQ_PARAM_OAUTH_VERIFIER = "oauth_verifier";
 	
+	static final String TEXT_PLAIN = "text/plain";
+	static final String APPLICATION_PDF = "application/pdf";
+	static final String APPLICATION_MSWORD = "application/msword";
+	static final String APPLICATION_PPT = "application/vnd.ms-powerpoint";
+	static final String APPLICATION_XLS = "application/vnd.ms-excel";
+	static final String IMAGE_JPEG = "image/jpeg";
+	static final String IMAGE_PNG = "image/png";
+	static final String VIDEO_MP4 = "video/mp4";
+	static final String VIDEO_MP3 = "video/mp3";
+
 	public OAuthService service; 
 	public NodeService nodeService;
 	public ContentService contentService;
@@ -226,30 +237,87 @@ public class EverfrescoChannelType extends AbstractChannelType {
         Note note = new Note();
         
         Map<QName, Serializable> props = nodeService.getProperties(nodeToPublish);
-
-        String title = props.get(ContentModel.PROP_TITLE).toString();
-        note.setTitle(title);
-        String fileName = props.get(ContentModel.PROP_NAME).toString();
-        log.info("****** Node Name : " + fileName + " Title: "+title );
-      	
+        
+        Serializable description = "";
+        Serializable title = "";
+        Serializable fileName = "";
+        
+        title = props.get(ContentModel.PROP_TITLE);
+        if (title!=null)
+        	note.setTitle(title.toString());
+       		log.info("****** Node Name : " + fileName.toString() + " Title: "+title );
+               
+        fileName = props.get(ContentModel.PROP_NAME);
+        if(fileName!=null)
+        	log.info("****** Node Name : " + fileName.toString() + " Title: "+title );
+        
+        description = props.get(ContentModel.PROP_DESCRIPTION);
+        if(description!=null)
+        	log.info("****** Node Name : " + description.toString() );
+        
         ContentData contentData = (ContentData) props.get(ContentModel.PROP_CONTENT);
         String originalMimeType = contentData.getMimetype();
         
         log.info("****** MimeType : " + originalMimeType );
         
         ContentReader reader = contentService.getReader(nodeToPublish, ContentModel.PROP_CONTENT);
-        String content = reader.getContentString();
         
-        // The content of an Evernote note is represented using Evernote Markup Language
-        // (ENML). The full ENML specification can be found in the Evernote API Overview
-        // at http://dev.evernote.com/documentation/cloud/chapters/ENML.php
-        String enmlContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-            + "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">"
-            + "<en-note>" 
-            + content
-            + "</en-note>";
-        note.setContent(enmlContent);
-        
+        if(originalMimeType.equalsIgnoreCase(TEXT_PLAIN))
+        {	
+	        // The content of an Evernote note is represented using Evernote Markup Language
+	        // (ENML). The full ENML specification can be found in the Evernote API Overview
+	        // at http://dev.evernote.com/documentation/cloud/chapters/ENML.php
+        	String content = reader.getContentString();
+            String enmlContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+	            + "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">"
+	            + "<en-note>" 
+	            + content
+	            + "</en-note>";
+	        note.setContent(enmlContent);
+	            
+        }else {
+        	
+            File file = new File("temp");
+        	reader.getContent(file);
+            String mimeType = originalMimeType; 
+            
+            // To include an attachment such as an image in a note, first create a Resource
+            // for the attachment. At a minimum, the Resource contains the binary attachment 
+            // data, an MD5 hash of the binary data, and the attachment MIME type. It can also 
+            // include attributes such as filename and location.
+            Resource resource = new Resource();
+            try {
+				resource.setData(readFileAsData(file));
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            resource.setMime(mimeType);
+            ResourceAttributes attributes = new ResourceAttributes();
+            attributes.setFileName(fileName.toString());
+            resource.setAttributes(attributes);
+
+            // Now, add the new Resource to the note's list of resources
+            note.addToResources(resource);
+
+            // To display the Resource as part of the note's content, include an <en-media>
+            // tag in the note's ENML content. The en-media tag identifies the corresponding
+            // Resource using the MD5 hash.
+            String hashHex = bytesToHex(resource.getData().getBodyHash());
+            
+            // The content of an Evernote note is represented using Evernote Markup Language
+            // (ENML). The full ENML specification can be found in the Evernote API Overview
+            // at http://dev.evernote.com/documentation/cloud/chapters/ENML.php
+            String enmlContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">"
+                + "<en-note>" 
+                + "<span style=\"color:green;\">" +title+" : " +description+ "</span><br/>"
+                + "<en-media type=\"" +mimeType+ "\" hash=\"" + hashHex + "\"/>"
+                + "</en-note>";
+            note.setContent(enmlContent);
+
+        }
+	    
         log.info("****** Setting Content : " + originalMimeType );
         
         // Finally, send the new note to Evernote using the createNote method
@@ -271,7 +339,7 @@ public class EverfrescoChannelType extends AbstractChannelType {
 	        Note createdNote = noteStore.createNote(accessToken, note);
 	        String newNoteGuid = createdNote.getGuid();
 	        log.info("****** newNoteGuid: " + newNoteGuid );
-	        
+	        //Determine if the noderef is the publish node or the original
 	        List<AssociationRef> assRefs = nodeService.getTargetAssocs(nodeToPublish, PublishingModel.ASSOC_SOURCE);
 	        if(assRefs != null && !assRefs.isEmpty())
 	        {
@@ -297,10 +365,10 @@ public class EverfrescoChannelType extends AbstractChannelType {
     /**
      * Helper method to read the contents of a file on disk and create a new Data object.
      */
-    private static Data readFileAsData(String fileName) throws Exception {
+    private static Data readFileAsData(File file) throws Exception {
 
       // Read the full binary contents of the file
-      FileInputStream in = new FileInputStream(fileName);
+      FileInputStream in = new FileInputStream(file);
       ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
       byte[] block = new byte[10240];
       int len;

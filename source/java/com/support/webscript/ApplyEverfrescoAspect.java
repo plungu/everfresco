@@ -17,6 +17,8 @@ import org.alfresco.service.cmr.publishing.channels.ChannelService;
 import org.alfresco.service.cmr.publishing.channels.ChannelType;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
+import org.alfresco.service.cmr.wiki.WikiPageInfo;
+import org.alfresco.service.cmr.wiki.WikiService;
 import org.alfresco.service.namespace.QName;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
@@ -47,6 +49,7 @@ public class ApplyEverfrescoAspect extends AbstractWebScript {
 	private NodeService nodeService;
 	private ChannelService channelService;
     private MetadataEncryptor encryptor;
+	private WikiService wikiService;
 	
 	public void setChannelService(ChannelService channelService) {
 		this.channelService = channelService;
@@ -61,17 +64,42 @@ public class ApplyEverfrescoAspect extends AbstractWebScript {
         this.encryptor = encryptor;
     }
     
+    public void setWikiService(WikiService wikiService)
+    {
+    	this.wikiService = wikiService;
+    }
+    
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res)
 			throws IOException {
 		
 		log.info("************ Syncing Everfreso and add aspect Webscript *************");		
 		
+		String title = req.getParameter("title");
+		String siteShortName = req.getParameter("siteName");
+		NodeRef nodeRef = null;
+		
+		String nodeRefStr = req.getParameter("nodeRef");
+		if(nodeRefStr == null || nodeRefStr.isEmpty())
+		{	
+			if( (title != null && !title.isEmpty()) || (siteShortName != null && !siteShortName.isEmpty())   )
+			{
+				log.info("************ Wiki Title *************: "+title );		
+				log.info("************ Site name *************: "+ siteShortName);	
+				WikiPageInfo wikiInfo = wikiService.getWikiPage(siteShortName, title);
+				nodeRef = wikiInfo.getNodeRef();
+			}else{
+				throw new WebScriptException("No Wiki Params found");
+			}
+		
+		}else{
+		
+			nodeRef = new NodeRef(nodeRefStr);
+		}
+		
 		try
     	{				
-			String nodeRefStr = req.getParameter("nodeRef");
-	    	NodeRef nodeRef = new NodeRef(nodeRefStr);
-	    	log.info("************ Getting nodeRef: "+ nodeRef.getId());
+	    	log.info("************ nodeRef: "+ nodeRef.getId());
 	    	
 	    	Channel channel = null;
 	    	
@@ -119,10 +147,11 @@ public class ApplyEverfrescoAspect extends AbstractWebScript {
     	{
     		e.printStackTrace();
     		throw new WebScriptException(e.getMessage());
-    	}	
-	}
+    	}
+			
+	}//end execute method
 	
 	
 	
 	
-}
+}//end class
