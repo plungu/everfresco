@@ -466,7 +466,7 @@
                fn: this.onPageSync,
                scope: this
             },
-            failureMessage: this._msg("load.fail")
+            failureMessage: this._msg("sync.fail")
          });
       },
       
