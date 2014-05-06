@@ -1,16 +1,16 @@
 <!-- Information used by consumer -->
 <h3>Evernote EDAM API Web Test State</h3>
-Consumer key: ${consumerKey} <br/>
-Request token URL: ${requestTokenUrl} <br/>
-Access token URL: ${accessTokenUrl} <br/>
-Authorization URL Base: ${authorizationUrlBase} <br/>
-<br/>
-<br/>
-User request token: ${requestToken!"No session var"}<br/>
-User request token secret:  ${requestTokenSecret!"No session var"}<br/>
-User oauth verifier:  ${verifier!"No session var"}<br/>
-User access token:  ${accessToken!"No session var"}<br/>
-User NoteStore URL:  ${noteStoreUrl!"No session var"}
+	Consumer key: ${consumerKey} <br/>
+	Request token URL: ${requestTokenUrl} <br/>
+	Access token URL: ${accessTokenUrl} <br/>
+	Authorization URL Base: ${authorizationUrlBase} <br/>
+	<br/>
+	<br/>
+	User request token: ${requestToken!"No session var"}<br/>
+	User request token secret:  ${requestTokenSecret!"No session var"}<br/>
+	User oauth verifier:  ${verifier!"No session var"}<br/>
+	User access token:  ${accessToken!"No session var"}<br/>
+	User NoteStore URL:  ${noteStoreUrl!"No session var"}<br/>
 
 <!-- Manual operation controls -->
 <hr/>

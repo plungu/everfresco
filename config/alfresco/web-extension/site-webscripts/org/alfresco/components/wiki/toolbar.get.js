@@ -2,6 +2,7 @@ function main()
 {
    var title = page.url.args.title;
    model.exists = false;
+   
    if (title)
    {
       var context = page.url.context + "/page/site/" + page.url.templateArgs.site + "/wiki-page?title=" + page.url.args.title,

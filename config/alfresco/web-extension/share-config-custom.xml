@@ -1,4 +1,5 @@
 <alfresco-config>
+	
 	<!-- Put Share Client in debug mode -->
     <config replace="true">
         <flags>
@@ -6,6 +7,7 @@
             <client-debug-autologging>true</client-debug-autologging>
         </flags>
     </config>
+	
 	<config evaluator="string-compare" condition="WebFramework">
 		<web-framework>
 			<defaults>
@@ -17,6 +19,7 @@
 	<config evaluator="string-compare" condition="DocumentLibrary">
 
       <aspects>
+         
          <visible>
             <aspect name="ef:syncable" />
          </visible>
@@ -26,6 +29,7 @@
 
          <removeable>
          </removeable>
+         
       </aspects>
 	  
 <!--       <sorting> -->
@@ -109,9 +113,9 @@
    <!-- Document Library Actions config section -->
    <config evaluator="string-compare" condition="DocLibActions">
 
-      <!--
+      	<!--
          Action definitions
-      -->
+      	-->
       	<actions>
 		      <action id="support.doclib.action.everfresco.sync"
 		              icon="everfresco"
@@ -122,9 +126,7 @@
 		         <param name="failureMessage">message.everfresco.sync.failure</param>
 		         <evaluator negate="true">support.evaluator.doclib.action.evernote</evaluator>
 		      </action>
-      	</actions>
-        
-        <actions>
+		      
 		      <action id="support.doclib.action.everfresco.remove"
 		              icon="everfrescoremove"
 		              type="javascript"
@@ -148,6 +150,5 @@
 	   	</actionGroups>
 	   
    </config>
-
-   
+  
 </alfresco-config>

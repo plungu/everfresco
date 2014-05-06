@@ -14,7 +14,6 @@ import org.alfresco.service.namespace.QName;
 import org.alfresco.service.cmr.security.AuthorityService;
 import org.alfresco.service.cmr.site.SiteService;
 import org.apache.log4j.Logger;
-
 import com.support.model.EverfrescoModel;
 
 public class SyncNode implements NodeServicePolicies.OnAddAspectPolicy, NodeServicePolicies.OnUpdateNodePolicy, NodeServicePolicies.OnRemoveAspectPolicy { 
@@ -32,7 +31,6 @@ public class SyncNode implements NodeServicePolicies.OnAddAspectPolicy, NodeServ
     private Behaviour onUpdateNode;
     private Behaviour onAddAspect;
     
-    
     public void init() {
 
 		log.info("************ Initialize everfresco sync Behavior *************");
@@ -42,15 +40,26 @@ public class SyncNode implements NodeServicePolicies.OnAddAspectPolicy, NodeServ
         this.onUpdateNode = new JavaBehaviour(this, "onUpdateNode", NotificationFrequency.TRANSACTION_COMMIT);
 
         // Bind behaviours to node policies
-        this.policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "onAddAspect"), 
-        		EverfrescoModel.ASPECT_EVERFRESCO_SYNCABLE, this.onAddAspect);
-        this.policyComponent.bindClassBehaviour(QName.createQName(NamespaceService.ALFRESCO_URI, "onUpdateNode"), 
-        		ContentModel.TYPE_CONTENT, this.onUpdateNode);
+        this.policyComponent.bindClassBehaviour(
+    		QName.createQName(
+    			NamespaceService.ALFRESCO_URI, 
+    			"onAddAspect"
+    		), 
+    		EverfrescoModel.ASPECT_EVERFRESCO_SYNCABLE, this.onAddAspect
+        );
+        
+        this.policyComponent.bindClassBehaviour(
+    		QName.createQName(
+    			NamespaceService.ALFRESCO_URI, 
+    			"onUpdateNode"
+    		), 
+    		ContentModel.TYPE_CONTENT, 
+    		this.onUpdateNode
+        );
     }
     
 	@Override
 	public void onAddAspect(NodeRef nodeRef, QName aspectTypeQName) {
-		// TODO Auto-generated method stub
 		log.info("************ Calling: Everfresco sync Behavior on add aspect *************");
     	sync(nodeRef);		
 	}
@@ -63,13 +72,11 @@ public class SyncNode implements NodeServicePolicies.OnAddAspectPolicy, NodeServ
 	
 	@Override
 	public void onUpdateNode(NodeRef nodeRef) {
-		// TODO Auto-generated method stub
 		log.info("************ Calling: Everfresco sync Behavior on update node *************");
     	sync(nodeRef);		
 	}
 
 	public void sync(NodeRef nodeRef) {
-		
 		return;
 	}
 

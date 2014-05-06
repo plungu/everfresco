@@ -39,7 +39,6 @@ import org.scribe.utils.OAuthEncoder;
 public class EvernoteAuthToken extends Token {
 
   private static final long serialVersionUID = -6892516333656106315L;
-
   private static final Pattern NOTESTORE_REGEX = Pattern.compile("edam_noteStoreUrl=([^&]+)");
   private static final Pattern WEBAPI_REGEX = Pattern.compile("edam_webApiUrlPrefix=([^&]+)");
   private static final Pattern USERID_REGEX = Pattern.compile("edam_userId=([^&]+)");
@@ -49,14 +48,18 @@ public class EvernoteAuthToken extends Token {
   private int userId;
 
   public EvernoteAuthToken(Token token) {
+	  
     super(token.getToken(), token.getSecret(), token.getRawResponse());
     this.noteStoreUrl = extract(getRawResponse(), NOTESTORE_REGEX);
     this.webApiUrlPrefix = extract(getRawResponse(), WEBAPI_REGEX);
     this.userId = Integer.parseInt(extract(getRawResponse(), USERID_REGEX));
+    
   }
   
   private String extract(String response, Pattern p) {
+	  
     Matcher matcher = p.matcher(response);
+    
     if (matcher.find() && matcher.groupCount() >= 1) {
       return OAuthEncoder.decode(matcher.group(1));
     } else {

@@ -36,6 +36,7 @@
 <!-- 						<constraint ref="ccdwf:pinConstraint"/> -->
 <!-- 					</constraints> -->
 				</property>
+				
 				<property name="ef:efPassword">
                 	<title>Evernote Password</title>
 	               	<description>Password on Evernote</description>
@@ -43,24 +44,29 @@
 <!-- 	               	<type>d:encrypted</type> -->
 <!-- 	               	<mandatory>true</mandatory> -->
 				</property>
+			
 			</properties>
 		</aspect>
 				
 		<aspect name="ef:syncable">
 		<title>Evernote Syncable</title>
+			
 			<properties>
 				<!-- Property stores the evernote node id -->
 				<property name="ef:nodeId">
 				    <type>d:text</type>
 				</property>
+				
 				<property name="ef:lastSync">
 					<type>d:date</type>
 				</property>
+				
 				<property name="ef:synced">
 					<type>d:boolean</type>
 					<default>false</default>
 				</property>
 			</properties>
+		
 		</aspect>
 		
 	  <aspect name="ef:DeliveryChannelAspect">

@@ -44,7 +44,6 @@ public class EverfrescoChannelType extends AbstractChannelType {
 	Logger log = Logger.getLogger(this.getClass()); 
 	
 	public final static String ID = "everfresco";
-	
 	public static final String NAMESPACE = "http://www.alfresco.com/model/everfresco/1.0";
 	public static final String PREFIX = "ef";
 	public static final QName TYPE_DELIVERY_CHANNEL = QName.createQName(NAMESPACE, "DeliveryChannel");
@@ -65,8 +64,7 @@ public class EverfrescoChannelType extends AbstractChannelType {
 	static final String urlBase = "https://sandbox.evernote.com";	  
 	static final String requestTokenUrl = urlBase + "/oauth";
 	static final String accessTokenUrl = urlBase + "/oauth";
-	static final String authorizationUrlBase = urlBase + "/OAuth.action";
-	//Change this to use alfresco server port
+	static final String authorizationUrlBase = urlBase + "/OAuth.action"; //Change this to use alfresco server port
 	
 	static final String REQ_PARAM_ACTION = "action";
 	static final String REQ_PARAM_OAUTH_TOKEN = "oauth_token";
@@ -96,31 +94,26 @@ public class EverfrescoChannelType extends AbstractChannelType {
 
 	@Override
 	public String getId() {
-		// TODO Auto-generated method stub
 		return ID;
 	}
 
 	@Override
 	public QName getChannelNodeType() {
-		// TODO Auto-generated method stub
 		return TYPE_DELIVERY_CHANNEL;
 	}
 
 	@Override
 	public boolean canPublish() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	public boolean canUnpublish() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public boolean canPublishStatusUpdates() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -128,19 +121,19 @@ public class EverfrescoChannelType extends AbstractChannelType {
 	@Override
     public AuthUrlPair getAuthorisationUrls(Channel channel, String callbackUrl)
     {
-	      @SuppressWarnings("rawtypes")
+    	@SuppressWarnings("rawtypes")
 		Class providerClass = org.scribe.builder.api.EvernoteApi.Sandbox.class;
-	      if (urlBase.equals("https://www.evernote.com")) {
-	        providerClass = org.scribe.builder.api.EvernoteApi.class;
-	      }
+	    if (urlBase.equals("https://www.evernote.com")) {
+	    	providerClass = org.scribe.builder.api.EvernoteApi.class;
+	    }
 	      
 	      //TODO: inject with spring configuration
-	      service = new ServiceBuilder()
-	          .provider(providerClass)
-	          .apiKey(consumerKey)
-	          .apiSecret(consumerSecret)
-	          .callback(callbackUrl)
-	          .build();
+	    service = new ServiceBuilder()
+	       	.provider(providerClass)
+	       	.apiKey(consumerKey)
+	        .apiSecret(consumerSecret)
+	        .callback(callbackUrl)
+	        .build();
 		  //TODO: inject with spring configuration
 	      
 		log.debug("****** Callback URL: "+callbackUrl);
@@ -148,24 +141,24 @@ public class EverfrescoChannelType extends AbstractChannelType {
 		Token scribeRequestToken = service.getRequestToken();
 		String requestToken = scribeRequestToken.getToken();
 		String requestTokenSecret = scribeRequestToken.getSecret();
+		
 		log.debug("****** GetRequestToken: " + scribeRequestToken.getRawResponse() );
 
-        if (requestToken != null && requestTokenSecret != null)
-        {
+        if (requestToken != null && requestTokenSecret != null) {
+        	
             Map<QName,Serializable> channelProps = new HashMap<QName, Serializable>();
             channelProps.put(PublishingModel.PROP_ACCESS_TOKEN, requestToken);
             channelProps.put(PublishingModel.PROP_ACCESS_SECRET, requestTokenSecret);
             channelProps = getEncryptor().encrypt(channelProps);
             getChannelService().updateChannel(channel, channelProps);
+            
         }
         
 		// Send an OAuth message to the Provider asking to exchange the
 		// existing Request Token for an Access Token
 		String authorizationUrl = authorizationUrlBase + "?oauth_token=" + requestToken;		          			          	
-
 		log.debug("****** Redirecting to: " + authorizationUrl );
 
-		
 		// Returning a null as the authorisation request URL here to indicate that we should use our own
 		// credential-gathering mechanism.
 		return new AuthUrlPair(authorizationUrl, callbackUrl);
@@ -173,19 +166,16 @@ public class EverfrescoChannelType extends AbstractChannelType {
     
     @Override
     protected AuthStatus internalAcceptAuthorisation(Channel channel, Map<String, String[]> callbackHeaders,
-            Map<String, String[]> callbackParams)
-    {
+            Map<String, String[]> callbackParams) {
         AuthStatus authorised = AuthStatus.UNAUTHORISED;
         
         String accessToken = null;
         String noteStoreUrl = null;
-        if (callbackParams.containsKey("access_token"))
-        {
+        
+        if (callbackParams.containsKey("access_token")) {
             //We have been given the access token directly.
             accessToken = callbackParams.get("access_token")[0];
-        }
-        else if (callbackParams.containsKey(REQ_PARAM_OAUTH_VERIFIER))
-        {
+        } else if (callbackParams.containsKey(REQ_PARAM_OAUTH_VERIFIER)) {
         	
         	String requestToken = channel.getProperties().get(PublishingModel.PROP_ACCESS_TOKEN).toString();
         	log.debug("****** Encrytped requestToken: " + requestToken );
@@ -203,19 +193,22 @@ public class EverfrescoChannelType extends AbstractChannelType {
           	//We have been passed an authorisation code that needs to be exchanged for a token
           	Verifier scribeVerifier = new Verifier(verifier);
           	log.debug("****** Scribe Verifier: " + scribeVerifier.getValue() );
+          	
           	Token scribeRequestToken = new Token(requestToken, requestTokenSecret);
           	log.debug("****** Scribe RequestToken: " + scribeRequestToken.getToken() );
+          	
           	EvernoteAuthToken token = new EvernoteAuthToken(service.getAccessToken(scribeRequestToken, scribeVerifier));
           	log.debug("****** GetAccessToken Reply: " + token.getRawResponse() );
+          	
           	accessToken = token.getToken();
           	noteStoreUrl = token.getNoteStoreUrl();
         }
+        
         if (accessToken != null)
         {
             Map<QName,Serializable> channelProps = new HashMap<QName, Serializable>();
             channelProps.put(PublishingModel.PROP_OAUTH2_TOKEN, accessToken);
             channelProps.put(PublishingModel.PROP_ASSET_URL, noteStoreUrl);
-//            channelProps = getEncryptor().encrypt(channelProps);
             getChannelService().updateChannel(channel, channelProps);
             authorised = AuthStatus.AUTHORISED;
         }

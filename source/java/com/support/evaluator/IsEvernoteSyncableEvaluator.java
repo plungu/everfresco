@@ -5,6 +5,7 @@ import org.alfresco.web.evaluator.BaseEvaluator;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
 /*
  * @IsEvernoteSyncableEvaluator
  * Extends: BaseEvaluator
@@ -35,11 +36,9 @@ public class IsEvernoteSyncableEvaluator extends BaseEvaluator {
             } else {
                 if (nodeAspects.contains(ASPECT_EVERFRESCO)) {
                 	log.debug("************ Evaluator: EverFresco Aspect Applied *************");
-                	
                     return true;
                 } else {
                 	log.debug("************ Evaluator: EverFresco Aspect Not Applied *************");
-
                 	return false;
                 }
             }
