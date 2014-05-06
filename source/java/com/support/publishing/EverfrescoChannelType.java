@@ -238,12 +238,20 @@ public class EverfrescoChannelType extends AbstractChannelType {
         Serializable fileName = "";
         
         title = props.get(ContentModel.PROP_TITLE);
-        if (title!=null)
-        	note.setTitle(title.toString());
-       		log.info("****** Node Name : " + fileName.toString() + " Title: "+title );
                
         fileName = props.get(ContentModel.PROP_NAME);
-        if(fileName!=null)
+        
+        // If there is no title, one will be constructed from {fileName}
+        if ( title.toString().length() > 0 || ! title.toString().equals("")) {
+       		log.info("****** Node Name : " + fileName.toString() + " Title: "+ title );
+        } else {
+        	title = ((String) fileName).substring(0, ((String) fileName).lastIndexOf('.'));
+        	log.warn("****** Document: " + fileName.toString() + " missing title. Creating one. ******");
+        	log.info("******** Node Name : " + fileName.toString() + "Title: "+ title.toString());
+        }
+        note.setTitle(title.toString());
+        
+        if(fileName != null)
         	log.info("****** Node Name : " + fileName.toString() + " Title: "+title );
         
         description = props.get(ContentModel.PROP_DESCRIPTION);
