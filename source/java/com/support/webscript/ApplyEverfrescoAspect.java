@@ -108,7 +108,7 @@ public class ApplyEverfrescoAspect extends AbstractWebScript {
 	    	
 			EverfrescoChannelType everfrescoChannel = (EverfrescoChannelType)channel.getChannelType();
 			everfrescoChannel.publish(nodeRef, channelProps);
-			log.info("************ Syncing Everfreso: "+ everfrescoChannel.getId());
+			log.debug("************ Syncing Everfreso: "+ everfrescoChannel.getId());
 			
 	    	//nodeService.addAspect(nodeRef, EverfrescoModel.ASPECT_EVERFRESCO_SYNCABLE, null);
 			//log.info("************ Applying Everfresco Aspect *************");

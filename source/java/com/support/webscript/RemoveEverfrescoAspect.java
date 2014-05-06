@@ -32,7 +32,7 @@ public class RemoveEverfrescoAspect extends AbstractWebScript {
 	    	String nodeRefStr = req.getParameter("nodeRef");
 	    	NodeRef nodeRef = new NodeRef(nodeRefStr);
 	    	nodeService.removeAspect(nodeRef, EverfrescoModel.ASPECT_EVERFRESCO_SYNCABLE);
-			log.info("************ Removing Everfresco Aspect *************");
+			log.debug("************ Removing Everfresco Aspect *************");
 			
 			// build a json object
 //	    	JSONObject obj = new JSONObject();

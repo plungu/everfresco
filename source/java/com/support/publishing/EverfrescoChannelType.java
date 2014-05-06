@@ -143,12 +143,12 @@ public class EverfrescoChannelType extends AbstractChannelType {
 	          .build();
 		  //TODO: inject with spring configuration
 	      
-		log.info("****** Callback URL: "+callbackUrl);
+		log.debug("****** Callback URL: "+callbackUrl);
 
 		Token scribeRequestToken = service.getRequestToken();
 		String requestToken = scribeRequestToken.getToken();
 		String requestTokenSecret = scribeRequestToken.getSecret();
-		log.info("****** GetRequestToken: " + scribeRequestToken.getRawResponse() );
+		log.debug("****** GetRequestToken: " + scribeRequestToken.getRawResponse() );
 
         if (requestToken != null && requestTokenSecret != null)
         {
@@ -163,7 +163,7 @@ public class EverfrescoChannelType extends AbstractChannelType {
 		// existing Request Token for an Access Token
 		String authorizationUrl = authorizationUrlBase + "?oauth_token=" + requestToken;		          			          	
 
-		log.info("****** Redirecting to: " + authorizationUrl );
+		log.debug("****** Redirecting to: " + authorizationUrl );
 
 		
 		// Returning a null as the authorisation request URL here to indicate that we should use our own
@@ -188,25 +188,25 @@ public class EverfrescoChannelType extends AbstractChannelType {
         {
         	
         	String requestToken = channel.getProperties().get(PublishingModel.PROP_ACCESS_TOKEN).toString();
-        	log.info("****** Encrytped requestToken: " + requestToken );
+        	log.debug("****** Encrytped requestToken: " + requestToken );
         	requestToken = getEncryptor().decrypt(PublishingModel.PROP_ACCESS_TOKEN, requestToken).toString();
-        	log.info("****** requestToken: " + requestToken );
+        	log.debug("****** requestToken: " + requestToken );
         	
         	String requestTokenSecret = channel.getProperties().get(PublishingModel.PROP_ACCESS_SECRET).toString();
-        	log.info("****** Encrytped requestTokenSecret: " + requestTokenSecret );
+        	log.debug("****** Encrytped requestTokenSecret: " + requestTokenSecret );
         	requestTokenSecret = getEncryptor().decrypt(PublishingModel.PROP_ACCESS_SECRET, requestTokenSecret).toString();
-        	log.info("****** requestTokenSecret: " + requestTokenSecret );
+        	log.debug("****** requestTokenSecret: " + requestTokenSecret );
 
         	//requestToken = req.getParameter(REQ_PARAM_OAUTH_TOKEN);
           	String verifier = callbackParams.get(REQ_PARAM_OAUTH_VERIFIER)[0];
         
           	//We have been passed an authorisation code that needs to be exchanged for a token
           	Verifier scribeVerifier = new Verifier(verifier);
-          	log.info("****** Scribe Verifier: " + scribeVerifier.getValue() );
+          	log.debug("****** Scribe Verifier: " + scribeVerifier.getValue() );
           	Token scribeRequestToken = new Token(requestToken, requestTokenSecret);
-          	log.info("****** Scribe RequestToken: " + scribeRequestToken.getToken() );
+          	log.debug("****** Scribe RequestToken: " + scribeRequestToken.getToken() );
           	EvernoteAuthToken token = new EvernoteAuthToken(service.getAccessToken(scribeRequestToken, scribeVerifier));
-          	log.info("****** GetAccessToken Reply: " + token.getRawResponse() );
+          	log.debug("****** GetAccessToken Reply: " + token.getRawResponse() );
           	accessToken = token.getToken();
           	noteStoreUrl = token.getNoteStoreUrl();
         }
@@ -243,25 +243,25 @@ public class EverfrescoChannelType extends AbstractChannelType {
         
         // If there is no title, one will be constructed from {fileName}
         if ( title.toString().length() > 0 || ! title.toString().equals("")) {
-       		log.info("****** Node Name : " + fileName.toString() + " Title: "+ title );
+       		log.debug("****** Node Name : " + fileName.toString() + " Title: "+ title );
         } else {
         	title = ((String) fileName).substring(0, ((String) fileName).lastIndexOf('.'));
         	log.warn("****** Document: " + fileName.toString() + " missing title. Creating one. ******");
-        	log.info("******** Node Name : " + fileName.toString() + "Title: "+ title.toString());
+        	log.debug("******** Node Name : " + fileName.toString() + "Title: "+ title.toString());
         }
         note.setTitle(title.toString());
         
         if(fileName != null)
-        	log.info("****** Node Name : " + fileName.toString() + " Title: "+title );
+        	log.debug("****** Node Name : " + fileName.toString() + " Title: "+title );
         
         description = props.get(ContentModel.PROP_DESCRIPTION);
         if(description!=null)
-        	log.info("****** Node Name : " + description.toString() );
+        	log.debug("****** Node Name : " + description.toString() );
         
         ContentData contentData = (ContentData) props.get(ContentModel.PROP_CONTENT);
         String originalMimeType = contentData.getMimetype();
         
-        log.info("****** MimeType : " + originalMimeType );
+        log.debug("****** MimeType : " + originalMimeType );
         
         ContentReader reader = contentService.getReader(nodeToPublish, ContentModel.PROP_CONTENT);
         
@@ -321,7 +321,7 @@ public class EverfrescoChannelType extends AbstractChannelType {
 
         }
 	    
-        log.info("****** Setting Content : " + originalMimeType );
+        log.debug("****** Setting Content : " + originalMimeType );
         
         // Finally, send the new note to Evernote using the createNote method
         // The new Note object that is returned will contain server-generated
@@ -330,18 +330,18 @@ public class EverfrescoChannelType extends AbstractChannelType {
         	
 	        String noteStoreUrl = channelProperties.get(PublishingModel.PROP_ASSET_URL).toString();
 	        noteStoreUrl = getEncryptor().decrypt(PublishingModel.PROP_ASSET_URL, noteStoreUrl).toString();
-	    	log.info("****** noteStoreUrl: " + noteStoreUrl );
+	    	log.debug("****** noteStoreUrl: " + noteStoreUrl );
 	        THttpClient noteStoreTrans = new THttpClient(noteStoreUrl);
 	        TBinaryProtocol noteStoreProt = new TBinaryProtocol(noteStoreTrans);
 	        NoteStore.Client noteStore = new NoteStore.Client(noteStoreProt, noteStoreProt);
 	        		
 	        SealedObject sealedAccessToken = (SealedObject) channelProperties.get(PublishingModel.PROP_OAUTH2_TOKEN);
-	        log.info("****** sealedAccessToken: " + sealedAccessToken );
+	        log.debug("****** sealedAccessToken: " + sealedAccessToken );
 	        String accessToken = (String)getEncryptor().decrypt(PublishingModel.PROP_OAUTH2_TOKEN, sealedAccessToken);
 	    	log.info("****** accessToken: " + accessToken );
 	        Note createdNote = noteStore.createNote(accessToken, note);
 	        String newNoteGuid = createdNote.getGuid();
-	        log.info("****** newNoteGuid: " + newNoteGuid );
+	        log.debug("****** newNoteGuid: " + newNoteGuid );
 	        //Determine if the noderef is the publish node or the original
 	        List<AssociationRef> assRefs = nodeService.getTargetAssocs(nodeToPublish, PublishingModel.ASSOC_SOURCE);
 	        if(assRefs != null && !assRefs.isEmpty())

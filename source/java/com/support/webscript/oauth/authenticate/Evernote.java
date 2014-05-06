@@ -64,8 +64,8 @@ public class Evernote extends AbstractWebScript {
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) 
 	{
-		  log.info("****** Inside the Evernote Auth Webscript ******");
-		  log.info("************************************************");
+		  log.debug("****** Inside the Evernote Auth Webscript ******");
+		  log.debug("************************************************");
 		  
 		  new HashMap<String, Object>();
 
@@ -91,15 +91,15 @@ public class Evernote extends AbstractWebScript {
 		
 		  } else if (action != null &&  accessToken == null || noteStoreUrl == null) {
 			  
-			  log.info("****** Checking Action Param: "+action);
+			  log.debug("****** Checking Action Param: "+action);
 		    
 			  // Set up the Scribe OAuthService. To access the Evernote production service,
 		      // remove EvernoteSandboxApi from the provider class below.
 			  String thisUrl = req.getServerPath()+req.getURL();
 		      thisUrl = thisUrl.substring(0, thisUrl.lastIndexOf('?'));
-		      log.info("****** thisUrl: "+thisUrl );
+		      log.debug("****** thisUrl: "+thisUrl );
 		      String cbUrl = thisUrl + callbackUrl;
-		      log.info("****** CallBackUrl: "+cbUrl );
+		      log.debug("****** CallBackUrl: "+cbUrl );
 		      @SuppressWarnings("rawtypes")
 			Class providerClass = org.scribe.builder.api.EvernoteApi.Sandbox.class;
 		      if (urlBase.equals("https://www.evernote.com")) {
@@ -117,7 +117,7 @@ public class Evernote extends AbstractWebScript {
 
 		      try {
 		        if (ACTION_RESET.equals(action)) {
-		        	log.info("****** Resetting Session");
+		        	log.debug("****** Resetting Session");
 		          	// Empty the server's stored session information for the current
 		          	// browser user so we can redo the test.
 		            session.removeValue(SESSION_ACCESS_TOKEN);
@@ -131,7 +131,7 @@ public class Evernote extends AbstractWebScript {
 		          	verifier = null;
 		          	requestTokenSecret = null;
 		          	
-		          	log.info("****** Removed all attributes from user session");
+		          	log.debug("****** Removed all attributes from user session");
 
 		        } else if (ACTION_GET_ACCESS_TOKEN.equals(action)) {
 			        // Send an OAuth message to the Provider asking for a new Request
@@ -141,29 +141,29 @@ public class Evernote extends AbstractWebScript {
 		          	requestTokenSecret = scribeRequestToken.getSecret();
 		          	session.setValue(SESSION_REQUEST_TOKEN, requestToken);
 		          	session.setValue(SESSION_REQUEAT_TOKEN_SECRET, requestTokenSecret);
-		          	log.info("****** GetRequestToken Reply: " + scribeRequestToken.getRawResponse() );
+		          	log.debug("****** GetRequestToken Reply: " + scribeRequestToken.getRawResponse() );
 		          
 		        	// Send an OAuth message to the Provider asking to exchange the
 		        	// existing Request Token for an Access Token
 		          	String authorizationUrl = authorizationUrlBase + "?oauth_token=" + requestToken;		          			          	
 		          	HttpServletResponse httpResponse = WebScriptServletRuntime.getHttpServletResponse(res);
 		          	httpResponse.sendRedirect(authorizationUrl);
-		          	log.info("****** Send Redierct: " + authorizationUrl );
+		          	log.debug("****** Send Redierct: " + authorizationUrl );
 			          
 		          	
 		        } else if (ACTION_CALL_BACK_RETURN.equals(action)) {
 		        	//requestToken = req.getParameter(REQ_PARAM_OAUTH_TOKEN);
 		          	verifier = req.getParameter(REQ_PARAM_OAUTH_VERIFIER);
 		          	session.setValue(SESSION_VERIFIER, verifier);
-		          	log.info("****** CallBackReturn verifier: " +  verifier);
+		          	log.debug("****** CallBackReturn verifier: " +  verifier);
 
 		          	//Use verifier from request token exchange to get the access token
 		          	Verifier scribeVerifier = new Verifier(verifier);
-		          	log.info("****** Scribe Verifier: " + scribeVerifier.getValue() );
+		          	log.debug("****** Scribe Verifier: " + scribeVerifier.getValue() );
 		          	Token scribeRequestToken = new Token(requestToken, requestTokenSecret);
-		          	log.info("****** Scribe RequestToken: " + scribeRequestToken.getToken() );
+		          	log.debug("****** Scribe RequestToken: " + scribeRequestToken.getToken() );
 		          	EvernoteAuthToken token = new EvernoteAuthToken(service.getAccessToken(scribeRequestToken, scribeVerifier));
-		          	log.info("****** GetAccessToken Reply: " + token.getRawResponse() );
+		          	log.debug("****** GetAccessToken Reply: " + token.getRawResponse() );
 		          	accessToken = token.getToken();
 		          	noteStoreUrl = token.getNoteStoreUrl();
 		          	session.setValue(SESSION_ACCESS_TOKEN, accessToken);
@@ -194,10 +194,10 @@ public class Evernote extends AbstractWebScript {
 				e.printStackTrace();
 			}
 	    	
-    	log.info("****** Hard Coded API Values - consumerKey::"+consumerKey+" accessTokenUrl::"+accessTokenUrl+
+    	log.debug("****** Hard Coded API Values - consumerKey::"+consumerKey+" accessTokenUrl::"+accessTokenUrl+
 			  " requestTokenUrl::"+accessTokenUrl+" authorizationUrlBase::"+authorizationUrlBase+"");	
 	  
-    	log.info("****** Session Values - requestToken::"+requestToken+" requestTokenSecret::"+requestTokenSecret+
+    	log.debug("****** Session Values - requestToken::"+requestToken+" requestTokenSecret::"+requestTokenSecret+
 			  " verifier::"+verifier+" accessToken::"+accessToken+" noteStoreUrl::"+noteStoreUrl+"");		  
 		    
 	  }

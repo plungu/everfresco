@@ -28,17 +28,17 @@ public class IsEvernoteSyncableEvaluator extends BaseEvaluator {
 
         try {
         	JSONArray nodeAspects = getNodeAspects(jsonObject);
-    		log.info("********* Calling EverFresco Evaluator on: "+jsonObject.get("name"));
+    		log.debug("********* Calling EverFresco Evaluator on: "+jsonObject.get("name"));
         	
         	if (nodeAspects == null) {
                 return false;
             } else {
                 if (nodeAspects.contains(ASPECT_EVERFRESCO)) {
-                	log.info("************ Evaluator: EverFresco Aspect Applied *************");
+                	log.debug("************ Evaluator: EverFresco Aspect Applied *************");
                 	
                     return true;
                 } else {
-                	log.info("************ Evaluator: EverFresco Aspect Not Applied *************");
+                	log.debug("************ Evaluator: EverFresco Aspect Not Applied *************");
 
                 	return false;
                 }

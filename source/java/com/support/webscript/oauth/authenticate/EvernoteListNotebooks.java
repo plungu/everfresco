@@ -26,25 +26,25 @@ public class EvernoteListNotebooks extends AbstractWebScript {
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) 
 	{
-		  log.info("****** Inside the Evernote List Webscript ******");
+		  log.debug("****** Inside the Evernote List Webscript ******");
 		  
 		  WebScriptSession session = req.getRuntime().getSession();
 		  String accessToken = (String)session.getValue(SESSION_ACCESS_TOKEN);
 		  String noteStoreUrl = (String)session.getValue(SESSION_NOTE_STORE_URL);
 		  
-		  log.info("****** accesstoken: "+accessToken);
-		  log.info("****** noteStoreUrl: "+noteStoreUrl);
+		  log.debug("****** accesstoken: "+accessToken);
+		  log.debug("****** noteStoreUrl: "+noteStoreUrl);
 		  
 		  if (accessToken == null || noteStoreUrl == null) {
 		
-			  log.error("Evernote Access Token is not in session");
+			  log.debug("Evernote Access Token is not in session");
 			  throw new WebScriptException("Evernote Access Token is not in session");
 		
 		  } else {
 			  
 		      try {
 		  
-		            log.info("****** Listing notebooks from: " + noteStoreUrl);
+		            log.debug("****** Listing notebooks from: " + noteStoreUrl);
 		            THttpClient noteStoreTrans = new THttpClient(noteStoreUrl);
 		            TBinaryProtocol noteStoreProt = new TBinaryProtocol(noteStoreTrans);
 		            NoteStore.Client noteStore = new NoteStore.Client(noteStoreProt, noteStoreProt);
@@ -53,7 +53,7 @@ public class EvernoteListNotebooks extends AbstractWebScript {
 	    	    	JSONObject obj = new JSONObject();
 	    	    	// put some data on it
 		            for (Object notebook : notebooks) {
-		            	log.info("Notebook: " + ((Notebook)notebook).getName());
+		            	log.debug("Notebook: " + ((Notebook)notebook).getName());
 		    	    	obj.put(((Notebook)notebook).getGuid(), ((Notebook)notebook).getName());
 		            }
 
