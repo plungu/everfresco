@@ -21,6 +21,7 @@ import org.springframework.extensions.webscripts.connector.HttpMethod;
 import org.springframework.extensions.webscripts.connector.Response;
 import org.springframework.extensions.webscripts.json.JSONWriter;
 
+@SuppressWarnings("deprecation")
 public class EverfrescoUserFactory extends SlingshotUserFactory {
 
 	public static final String PROPERTY_EVERFRESCO_USERNAME = "{http://www.alfresco.com/model/everfresco/1.0}efUserName";

@@ -2,41 +2,24 @@ package com.support.webscript;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.crypto.SealedObject;
-import javax.servlet.http.HttpServletResponse;
-
-import org.alfresco.model.ContentModel;
 import org.alfresco.repo.node.encryption.MetadataEncryptor;
-import org.alfresco.repo.publishing.PublishingModel;
 import org.alfresco.service.cmr.publishing.channels.Channel;
 import org.alfresco.service.cmr.publishing.channels.ChannelService;
-import org.alfresco.service.cmr.publishing.channels.ChannelType;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.cmr.wiki.WikiPageInfo;
 import org.alfresco.service.cmr.wiki.WikiService;
 import org.alfresco.service.namespace.QName;
 import org.apache.log4j.Logger;
-import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.springframework.extensions.webscripts.AbstractWebScript;
-import org.springframework.extensions.webscripts.DeclarativeWebScript;
-import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
-import org.springframework.extensions.webscripts.WebScriptSession;
-import org.springframework.extensions.webscripts.servlet.WebScriptServletRuntime;
 
-import com.evernote.edam.notestore.NoteStore;
-import com.evernote.edam.type.Note;
-import com.evernote.thrift.protocol.TBinaryProtocol;
-import com.evernote.thrift.transport.THttpClient;
-import com.support.model.EverfrescoModel;
 import com.support.publishing.EverfrescoChannelType;
 
 public class ApplyEverfrescoAspect extends AbstractWebScript {
@@ -46,22 +29,18 @@ public class ApplyEverfrescoAspect extends AbstractWebScript {
 	static final String SESSION_ACCESS_TOKEN = "accessToken";
 	static final String SESSION_NOTE_STORE_URL = "noteStoreUrl";
 	
-	private NodeService nodeService;
 	private ChannelService channelService;
-    private MetadataEncryptor encryptor;
-	private WikiService wikiService;
+    private WikiService wikiService;
 	
 	public void setChannelService(ChannelService channelService) {
 		this.channelService = channelService;
 	}
 
 	public void setNodeService(NodeService nodeService) {
-		this.nodeService = nodeService;
 	}
 
     public void setEncryptor(MetadataEncryptor encryptor)
     {
-        this.encryptor = encryptor;
     }
     
     public void setWikiService(WikiService wikiService)
@@ -69,6 +48,7 @@ public class ApplyEverfrescoAspect extends AbstractWebScript {
     	this.wikiService = wikiService;
     }
     
+	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res)
 			throws IOException {
@@ -108,7 +88,7 @@ public class ApplyEverfrescoAspect extends AbstractWebScript {
 	    	List<Channel> channels = channelService.getChannels();
 	    	for (Channel c:channels)
 	    	{
-	    		String id = c.getId();
+	    		c.getId();
 	    		if (c.getChannelType().getId() == "everfresco")
 	    		{
 	    			channel = c;

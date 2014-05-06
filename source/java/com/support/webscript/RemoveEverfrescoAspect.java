@@ -1,17 +1,10 @@
 package com.support.webscript;
 
 import java.io.IOException;
-import java.util.Map;
-
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
-import org.alfresco.service.namespace.QName;
 import org.apache.log4j.Logger;
-import org.json.JSONException;
-import org.json.simple.JSONObject;
 import org.springframework.extensions.webscripts.AbstractWebScript;
-import org.springframework.extensions.webscripts.DeclarativeWebScript;
-import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;

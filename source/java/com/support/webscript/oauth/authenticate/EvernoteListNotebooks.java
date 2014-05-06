@@ -1,26 +1,15 @@
 package com.support.webscript.oauth.authenticate;
 
 import java.util.*;
-import java.io.IOException;
-import java.net.*;
-
-import javax.servlet.http.HttpSession;
 
 import com.evernote.thrift.protocol.TBinaryProtocol;
 import com.evernote.thrift.transport.THttpClient;
 import com.evernote.edam.type.*;
 import com.evernote.edam.notestore.*;
-import com.evernote.client.oauth.*;
 
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
-import org.scribe.builder.ServiceBuilder;
-import org.scribe.oauth.*;
-import org.scribe.model.*;
 import org.springframework.extensions.webscripts.AbstractWebScript;
-import org.springframework.extensions.webscripts.Cache;
-import org.springframework.extensions.webscripts.DeclarativeWebScript;
-import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -33,6 +22,7 @@ public class EvernoteListNotebooks extends AbstractWebScript {
 	static final String SESSION_ACCESS_TOKEN = "accessToken";
 	static final String SESSION_NOTE_STORE_URL = "noteStoreUrl";
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) 
 	{

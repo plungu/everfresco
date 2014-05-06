@@ -2,27 +2,17 @@ package com.support.webscript.oauth.authenticate;
 
 import java.util.*;
 import java.io.IOException;
-import java.net.*;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import com.evernote.thrift.protocol.TBinaryProtocol;
-import com.evernote.thrift.transport.THttpClient;
-import com.evernote.edam.type.*;
-import com.evernote.edam.notestore.*;
 import com.evernote.client.oauth.*;
 
 import org.apache.log4j.Logger;
-import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.oauth.*;
 import org.scribe.model.*;
 import org.springframework.extensions.webscripts.AbstractWebScript;
-import org.springframework.extensions.webscripts.Cache;
-import org.springframework.extensions.webscripts.DeclarativeWebScript;
-import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
 import org.springframework.extensions.webscripts.WebScriptResponse;
@@ -70,13 +60,14 @@ public class Evernote extends AbstractWebScript {
 	static final String REQ_PARAM_OAUTH_TOKEN = "oauth_token";
 	static final String REQ_PARAM_OAUTH_VERIFIER = "oauth_verifier";
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) 
 	{
 		  log.info("****** Inside the Evernote Auth Webscript ******");
 		  log.info("************************************************");
 		  
-		  Map<String, Object> model = new HashMap<String, Object>();
+		  new HashMap<String, Object>();
 
 		  WebScriptSession session = req.getRuntime().getSession();
 		  String accessToken = (String)session.getValue(SESSION_ACCESS_TOKEN);
@@ -109,7 +100,8 @@ public class Evernote extends AbstractWebScript {
 		      log.info("****** thisUrl: "+thisUrl );
 		      String cbUrl = thisUrl + callbackUrl;
 		      log.info("****** CallBackUrl: "+cbUrl );
-		      Class providerClass = org.scribe.builder.api.EvernoteApi.Sandbox.class;
+		      @SuppressWarnings("rawtypes")
+			Class providerClass = org.scribe.builder.api.EvernoteApi.Sandbox.class;
 		      if (urlBase.equals("https://www.evernote.com")) {
 		        providerClass = org.scribe.builder.api.EvernoteApi.class;
 		      }

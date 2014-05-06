@@ -1,10 +1,6 @@
 package com.support.webscript.oauth.authenticate;
 
 import java.util.*;
-import java.io.IOException;
-import java.net.*;
-
-import javax.servlet.http.HttpSession;
 
 import com.evernote.thrift.protocol.TBinaryProtocol;
 import com.evernote.thrift.transport.THttpClient;
@@ -16,15 +12,12 @@ import org.apache.log4j.Logger;
 import org.scribe.builder.ServiceBuilder;
 import org.scribe.oauth.*;
 import org.scribe.model.*;
-import org.springframework.extensions.webscripts.AbstractWebScript;
 import org.springframework.extensions.webscripts.Cache;
 import org.springframework.extensions.webscripts.DeclarativeWebScript;
 import org.springframework.extensions.webscripts.Status;
 import org.springframework.extensions.webscripts.WebScriptException;
 import org.springframework.extensions.webscripts.WebScriptRequest;
-import org.springframework.extensions.webscripts.WebScriptResponse;
 import org.springframework.extensions.webscripts.WebScriptSession;
-import org.alfresco.service.cmr.oauth2.*;
 
 public class EvernoteOAuthStepByStep extends DeclarativeWebScript {
 
@@ -105,11 +98,13 @@ public class EvernoteOAuthStepByStep extends DeclarativeWebScript {
 		      log.info("****** thisUrl: "+thisUrl );
 		      String cbUrl = thisUrl + callbackUrl;
 		      log.info("****** CallBackUrl: "+cbUrl );
-		      Class providerClass = org.scribe.builder.api.EvernoteApi.Sandbox.class;
+		      @SuppressWarnings("rawtypes")
+			Class providerClass = org.scribe.builder.api.EvernoteApi.Sandbox.class;
 		      if (urlBase.equals("https://www.evernote.com")) {
 		        providerClass = org.scribe.builder.api.EvernoteApi.class;
 		      }
-		      OAuthService service = new ServiceBuilder()
+		      @SuppressWarnings("unchecked")
+			OAuthService service = new ServiceBuilder()
 		          .provider(providerClass)
 		          .apiKey(consumerKey)
 		          .apiSecret(consumerSecret)

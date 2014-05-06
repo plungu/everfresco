@@ -1,8 +1,5 @@
 package com.support.behavior;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.module.ImporterModuleComponent;
 import org.alfresco.repo.node.NodeServicePolicies;
@@ -10,13 +7,11 @@ import org.alfresco.repo.policy.Behaviour;
 import org.alfresco.repo.policy.JavaBehaviour;
 import org.alfresco.repo.policy.PolicyComponent;
 import org.alfresco.repo.policy.Behaviour.NotificationFrequency;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.NodeRef;
 import org.alfresco.service.cmr.repository.NodeService;
 import org.alfresco.service.namespace.NamespaceService;
 import org.alfresco.service.namespace.QName;
 import org.alfresco.service.cmr.security.AuthorityService;
-import org.alfresco.service.cmr.security.AuthorityType;
 import org.alfresco.service.cmr.site.SiteService;
 import org.apache.log4j.Logger;
 

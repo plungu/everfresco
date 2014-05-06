@@ -11,16 +11,12 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.crypto.SealedObject;
-import javax.servlet.http.HttpServletResponse;
 
 import org.alfresco.model.ContentModel;
 import org.alfresco.repo.publishing.AbstractChannelType;
 import org.alfresco.repo.publishing.PublishingModel;
 import org.alfresco.service.cmr.publishing.channels.Channel;
-import org.alfresco.service.cmr.publishing.channels.ChannelType.AuthStatus;
-import org.alfresco.service.cmr.publishing.channels.ChannelType.AuthUrlPair;
 import org.alfresco.service.cmr.repository.AssociationRef;
-import org.alfresco.service.cmr.repository.ChildAssociationRef;
 import org.alfresco.service.cmr.repository.ContentData;
 import org.alfresco.service.cmr.repository.ContentReader;
 import org.alfresco.service.cmr.repository.ContentService;
@@ -32,9 +28,6 @@ import org.scribe.builder.ServiceBuilder;
 import org.scribe.model.Token;
 import org.scribe.model.Verifier;
 import org.scribe.oauth.OAuthService;
-import org.springframework.extensions.webscripts.servlet.WebScriptServletRuntime;
-import org.springframework.social.oauth2.AccessGrant;
-import org.springframework.social.oauth2.OAuth2Operations;
 
 import com.evernote.client.oauth.EvernoteAuthToken;
 import com.evernote.edam.notestore.NoteStore;
@@ -131,10 +124,12 @@ public class EverfrescoChannelType extends AbstractChannelType {
 		return false;
 	}
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public AuthUrlPair getAuthorisationUrls(Channel channel, String callbackUrl)
     {
-	      Class providerClass = org.scribe.builder.api.EvernoteApi.Sandbox.class;
+	      @SuppressWarnings("rawtypes")
+		Class providerClass = org.scribe.builder.api.EvernoteApi.Sandbox.class;
 	      if (urlBase.equals("https://www.evernote.com")) {
 	        providerClass = org.scribe.builder.api.EvernoteApi.class;
 	      }
@@ -229,7 +224,7 @@ public class EverfrescoChannelType extends AbstractChannelType {
     }
 
     @Override
-    public void publish(NodeRef nodeToPublish, Map channelProperties)
+    public void publish(NodeRef nodeToPublish, @SuppressWarnings("rawtypes") Map channelProperties)
     {        
     	log.info("****** Publishing Node ***********" );
       	// To create a new note, simply create a new Note object and fill in 
