@@ -14,8 +14,7 @@ import org.json.simple.JSONObject;
  */
 public class IsEvernoteSyncableEvaluator extends BaseEvaluator {
 	
-	Logger log = Logger.getLogger(this.getClass()); 
-
+	private Logger log = Logger.getLogger(this.getClass()); 
 	private static final String ASPECT_EVERFRESCO = "ef:syncable";
 	
 	/*

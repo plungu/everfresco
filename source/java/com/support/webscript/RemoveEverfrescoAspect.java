@@ -13,7 +13,7 @@ import com.support.model.EverfrescoModel;
 
 public class RemoveEverfrescoAspect extends AbstractWebScript {
 
-	Logger log = Logger.getLogger(this.getClass()); 
+	private Logger log = Logger.getLogger(this.getClass()); 
 	
 	private NodeService nodeService;
 	
@@ -27,30 +27,17 @@ public class RemoveEverfrescoAspect extends AbstractWebScript {
 	
 		log.info("************ Executing Everfresco Webscript *************");
 
-		try
-    	{
-	    	String nodeRefStr = req.getParameter("nodeRef");
+		try {
+	    	
+			String nodeRefStr = req.getParameter("nodeRef");
 	    	NodeRef nodeRef = new NodeRef(nodeRefStr);
 	    	nodeService.removeAspect(nodeRef, EverfrescoModel.ASPECT_EVERFRESCO_SYNCABLE);
 			log.debug("************ Removing Everfresco Aspect *************");
 			
-			// build a json object
-//	    	JSONObject obj = new JSONObject();
-	    	
-	    	// put some data on it
-//	    	obj.put("field1", "data1");
-	    	
-	    	// build a JSON string and send it back
-//	    	String jsonString = obj.toString();
-//	    	res.getWriter().write(jsonString);
-    	}
-    	catch(Exception e)
-    	{
+    	} catch(Exception e) {
+    		
     		throw new WebScriptException("Unable to serialize JSON");
+    	
     	}	
 	}
-	
-	
-	
-	
 }

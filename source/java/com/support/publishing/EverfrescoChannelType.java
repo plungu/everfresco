@@ -159,7 +159,7 @@ public class EverfrescoChannelType extends AbstractChannelType {
 		String authorizationUrl = authorizationUrlBase + "?oauth_token=" + requestToken;		          			          	
 		log.debug("****** Redirecting to: " + authorizationUrl );
 
-		// Returning a null as the authorisation request URL here to indicate that we should use our own
+		// Returning a null as the authorization request URL here to indicate that we should use our own
 		// credential-gathering mechanism.
 		return new AuthUrlPair(authorizationUrl, callbackUrl);
     }
@@ -177,12 +177,15 @@ public class EverfrescoChannelType extends AbstractChannelType {
             accessToken = callbackParams.get("access_token")[0];
         } else if (callbackParams.containsKey(REQ_PARAM_OAUTH_VERIFIER)) {
         	
-        	String requestToken = channel.getProperties().get(PublishingModel.PROP_ACCESS_TOKEN).toString();
+        	String requestToken;
+        	String requestTokenSecret;
+        	
+        	requestToken = channel.getProperties().get(PublishingModel.PROP_ACCESS_TOKEN).toString();
         	log.debug("****** Encrytped requestToken: " + requestToken );
         	requestToken = getEncryptor().decrypt(PublishingModel.PROP_ACCESS_TOKEN, requestToken).toString();
         	log.debug("****** requestToken: " + requestToken );
         	
-        	String requestTokenSecret = channel.getProperties().get(PublishingModel.PROP_ACCESS_SECRET).toString();
+        	requestTokenSecret = channel.getProperties().get(PublishingModel.PROP_ACCESS_SECRET).toString();
         	log.debug("****** Encrytped requestTokenSecret: " + requestTokenSecret );
         	requestTokenSecret = getEncryptor().decrypt(PublishingModel.PROP_ACCESS_SECRET, requestTokenSecret).toString();
         	log.debug("****** requestTokenSecret: " + requestTokenSecret );
@@ -190,7 +193,7 @@ public class EverfrescoChannelType extends AbstractChannelType {
         	//requestToken = req.getParameter(REQ_PARAM_OAUTH_TOKEN);
           	String verifier = callbackParams.get(REQ_PARAM_OAUTH_VERIFIER)[0];
         
-          	//We have been passed an authorisation code that needs to be exchanged for a token
+          	//We have been passed an authorization code that needs to be exchanged for a token
           	Verifier scribeVerifier = new Verifier(verifier);
           	log.debug("****** Scribe Verifier: " + scribeVerifier.getValue() );
           	
@@ -204,8 +207,7 @@ public class EverfrescoChannelType extends AbstractChannelType {
           	noteStoreUrl = token.getNoteStoreUrl();
         }
         
-        if (accessToken != null)
-        {
+        if (accessToken != null) {
             Map<QName,Serializable> channelProps = new HashMap<QName, Serializable>();
             channelProps.put(PublishingModel.PROP_OAUTH2_TOKEN, accessToken);
             channelProps.put(PublishingModel.PROP_ASSET_URL, noteStoreUrl);
@@ -220,7 +222,8 @@ public class EverfrescoChannelType extends AbstractChannelType {
     public void publish(NodeRef nodeToPublish, @SuppressWarnings("rawtypes") Map channelProperties)
     {        
     	log.info("****** Publishing Node ***********" );
-      	// To create a new note, simply create a new Note object and fill in 
+      	
+    	// To create a new note, simply create a new Note object and fill in 
         // attributes such as the note's title.
         Note note = new Note();
         
@@ -235,19 +238,21 @@ public class EverfrescoChannelType extends AbstractChannelType {
         fileName = props.get(ContentModel.PROP_NAME);
         
         // If there is no title, one will be constructed from {fileName}
-        if ( title.toString().length() > 0 || ! title.toString().equals("")) {
-       		log.debug("****** Node Name : " + fileName.toString() + " Title: "+ title );
-        } else {
+        if ( title.toString().length() == 0 || title.toString().equals("")) {
+        	
         	title = ((String) fileName).substring(0, ((String) fileName).lastIndexOf('.'));
         	log.warn("****** Document: " + fileName.toString() + " missing title. Creating one. ******");
-        	log.debug("******** Node Name : " + fileName.toString() + "Title: "+ title.toString());
+        	
         }
+        
+        log.debug("****** Node Name : " + fileName.toString() + " Title: "+ title );
         note.setTitle(title.toString());
         
         if(fileName != null)
         	log.debug("****** Node Name : " + fileName.toString() + " Title: "+title );
         
         description = props.get(ContentModel.PROP_DESCRIPTION);
+        
         if(description!=null)
         	log.debug("****** Node Name : " + description.toString() );
         
@@ -258,9 +263,9 @@ public class EverfrescoChannelType extends AbstractChannelType {
         
         ContentReader reader = contentService.getReader(nodeToPublish, ContentModel.PROP_CONTENT);
         
-        if(originalMimeType.equalsIgnoreCase(TEXT_PLAIN))
-        {	
-	        // The content of an Evernote note is represented using Evernote Markup Language
+        if(originalMimeType.equalsIgnoreCase(TEXT_PLAIN)) {	
+	        
+        	// The content of an Evernote note is represented using Evernote Markup Language
 	        // (ENML). The full ENML specification can be found in the Evernote API Overview
 	        // at http://dev.evernote.com/documentation/cloud/chapters/ENML.php
         	String content = reader.getContentString();
@@ -271,7 +276,7 @@ public class EverfrescoChannelType extends AbstractChannelType {
 	            + "</en-note>";
 	        note.setContent(enmlContent);
 	            
-        }else {
+        } else {
         	
             File file = new File("temp");
         	reader.getContent(file);
@@ -282,12 +287,13 @@ public class EverfrescoChannelType extends AbstractChannelType {
             // data, an MD5 hash of the binary data, and the attachment MIME type. It can also 
             // include attributes such as filename and location.
             Resource resource = new Resource();
+            
             try {
 				resource.setData(readFileAsData(file));
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+            
             resource.setMime(mimeType);
             ResourceAttributes attributes = new ResourceAttributes();
             attributes.setFileName(fileName.toString());
@@ -310,6 +316,7 @@ public class EverfrescoChannelType extends AbstractChannelType {
                 + "<span style=\"color:green;\">" +title+" : " +description+ "</span><br/>"
                 + "<en-media type=\"" +mimeType+ "\" hash=\"" + hashHex + "\"/>"
                 + "</en-note>";
+            
             note.setContent(enmlContent);
 
         }
@@ -324,33 +331,43 @@ public class EverfrescoChannelType extends AbstractChannelType {
 	        String noteStoreUrl = channelProperties.get(PublishingModel.PROP_ASSET_URL).toString();
 	        noteStoreUrl = getEncryptor().decrypt(PublishingModel.PROP_ASSET_URL, noteStoreUrl).toString();
 	    	log.debug("****** noteStoreUrl: " + noteStoreUrl );
-	        THttpClient noteStoreTrans = new THttpClient(noteStoreUrl);
+	        
+	    	THttpClient noteStoreTrans = new THttpClient(noteStoreUrl);
 	        TBinaryProtocol noteStoreProt = new TBinaryProtocol(noteStoreTrans);
 	        NoteStore.Client noteStore = new NoteStore.Client(noteStoreProt, noteStoreProt);
 	        		
 	        SealedObject sealedAccessToken = (SealedObject) channelProperties.get(PublishingModel.PROP_OAUTH2_TOKEN);
 	        log.debug("****** sealedAccessToken: " + sealedAccessToken );
+	        
 	        String accessToken = (String)getEncryptor().decrypt(PublishingModel.PROP_OAUTH2_TOKEN, sealedAccessToken);
 	    	log.info("****** accessToken: " + accessToken );
 	        Note createdNote = noteStore.createNote(accessToken, note);
+	        
 	        String newNoteGuid = createdNote.getGuid();
 	        log.debug("****** newNoteGuid: " + newNoteGuid );
+	        
 	        //Determine if the noderef is the publish node or the original
 	        List<AssociationRef> assRefs = nodeService.getTargetAssocs(nodeToPublish, PublishingModel.ASSOC_SOURCE);
-	        if(assRefs != null && !assRefs.isEmpty())
-	        {
+	        if (assRefs != null && !assRefs.isEmpty()) {
+	        	
 	        	NodeRef source = assRefs.get(0).getTargetRef();
 	        	nodeToPublish = source;
+	        	
 	        }
 	        	
 	    	nodeService.addAspect(nodeToPublish, EverfrescoModel.ASPECT_EVERFRESCO_SYNCABLE, null);
 	    	Set<QName> aspects = nodeService.getAspects(nodeToPublish);
+	    	
 	    	for(QName aspect : aspects){
+	    		
 	    		log.info("************ "+aspect.getLocalName()+" *************");
+	    	
 	    	}
+	    	
 	    	log.info("************ Applied Everfresco Aspect *************");
 	    	
         } catch (Exception e){
+        	
         	e.printStackTrace();
         	log.error("Error Creating Note: "+note.getTitle());
             
@@ -368,9 +385,11 @@ public class EverfrescoChannelType extends AbstractChannelType {
       ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
       byte[] block = new byte[10240];
       int len;
+      
       while ((len = in.read(block)) >= 0) {
-        byteOut.write(block, 0, len);
+    	  byteOut.write(block, 0, len);
       }
+      
       in.close();
       byte[] body = byteOut.toByteArray();
       
@@ -388,13 +407,17 @@ public class EverfrescoChannelType extends AbstractChannelType {
      */
     public static String bytesToHex(byte[] bytes) {
       StringBuilder sb = new StringBuilder();
+      
       for (byte hashByte : bytes) {
-        int intVal = 0xff & hashByte;
-        if (intVal < 0x10) {
-          sb.append('0');
-        }
-        sb.append(Integer.toHexString(intVal));
+    	  
+    	  int intVal = 0xff & hashByte;
+    	  if (intVal < 0x10) {
+    		  sb.append('0');
+    	  }
+    	  sb.append(Integer.toHexString(intVal));
+    	  
       }
+      
       return sb.toString();
     }
 }

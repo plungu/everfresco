@@ -21,7 +21,7 @@ import org.springframework.extensions.webscripts.WebScriptSession;
 
 public class EvernoteOAuthStepByStep extends DeclarativeWebScript {
 
-	Logger log = Logger.getLogger(this.getClass()); 
+	private Logger log = Logger.getLogger(this.getClass()); 
 
 	//TODO: MAKE MSG PROPERTIES with spring config
 	/*
@@ -40,10 +40,7 @@ public class EvernoteOAuthStepByStep extends DeclarativeWebScript {
 	static final String accessTokenUrl = urlBase + "/oauth";
 	static final String authorizationUrlBase = urlBase + "/OAuth.action";
 	//Change this to use alfresco server port
-	static final String callbackUrl = "?action=callbackReturn";
-	//TODO: MAKE MSG PROPERTIES with spring config
-	
-	
+	static final String callbackUrl = "?action=callbackReturn";	
 	
 	static final String ACTION_RESET = "reset";
 	static final String ACTION_GET_REQUEST_TOKEN = "getRequestToken";
@@ -61,32 +58,32 @@ public class EvernoteOAuthStepByStep extends DeclarativeWebScript {
 	static final String REQ_PARAM_OAUTH_VERIFIER = "oauth_verifier";
 
 	@Override
-	public Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) 
-	{
-		  log.debug("****** Inside the Evernote Auth Webscript ******");
+	public Map<String, Object> executeImpl(WebScriptRequest req, Status status, Cache cache) {
 		  
-		  Map<String, Object> model = new HashMap<String, Object>();
+		log.debug("****** Inside the Evernote Auth Webscript ******");
+		  
+		Map<String, Object> model = new HashMap<String, Object>();
 
-		  WebScriptSession session = req.getRuntime().getSession();
-		  String accessToken = (String)session.getValue(SESSION_ACCESS_TOKEN);
-		  String requestToken = (String)session.getValue(SESSION_REQUEST_TOKEN);
-		  String requestTokenSecret = (String)session.getValue(SESSION_REQUEAT_TOKEN_SECRET);
-		  String verifier = (String)session.getValue(SESSION_VERIFIER);
-		  String noteStoreUrl = (String)session.getValue(SESSION_NOTE_STORE_URL);
+		WebScriptSession session = req.getRuntime().getSession();
+		String accessToken = (String)session.getValue(SESSION_ACCESS_TOKEN);
+		String requestToken = (String)session.getValue(SESSION_REQUEST_TOKEN);
+		String requestTokenSecret = (String)session.getValue(SESSION_REQUEAT_TOKEN_SECRET);
+		String verifier = (String)session.getValue(SESSION_VERIFIER);
+		String noteStoreUrl = (String)session.getValue(SESSION_NOTE_STORE_URL);
 		  		  
-		  //Check the request action to see what to do next
-		  String action = req.getParameter(REQ_PARAM_ACTION);
-		  
-		  if ("".equals(consumerKey)) {
-		
-			  log.error(
-				  		"Before using this sample code you must edit the file Evernote.java " +
-				  		"and replace consumerKey and consumerSecret with the values that you received from Evernote." +
-				  		"If you do not have an API key, you can request one from " +
-				  		"<a href='http://dev.evernote.com/documentation/cloud/'>http://dev.evernote.com/documentation/cloud/</a>"				  		
-					  );
-		
-		  } else if (action != null) {
+		//Check the request action to see what to do next
+		String action = req.getParameter(REQ_PARAM_ACTION);
+	  
+		if ("".equals(consumerKey)) {
+	
+		  log.error(
+			  		"Before using this sample code you must edit the file Evernote.java " +
+			  		"and replace consumerKey and consumerSecret with the values that you received from Evernote." +
+			  		"If you do not have an API key, you can request one from " +
+			  		"<a href='http://dev.evernote.com/documentation/cloud/'>http://dev.evernote.com/documentation/cloud/</a>"				  		
+		  );
+	
+		} else if (action != null) {
 			  
 			  log.debug("****** Checking Action Param: "+action);
 		    
@@ -96,15 +93,19 @@ public class EvernoteOAuthStepByStep extends DeclarativeWebScript {
 		      String thisUrl = req.getServerPath()+req.getURL();
 		      thisUrl = thisUrl.substring(0, thisUrl.lastIndexOf('?'));
 		      log.debug("****** thisUrl: "+thisUrl );
+		      
 		      String cbUrl = thisUrl + callbackUrl;
 		      log.debug("****** CallBackUrl: "+cbUrl );
 		      @SuppressWarnings("rawtypes")
-			Class providerClass = org.scribe.builder.api.EvernoteApi.Sandbox.class;
+		      Class providerClass = org.scribe.builder.api.EvernoteApi.Sandbox.class;
+		      
 		      if (urlBase.equals("https://www.evernote.com")) {
-		        providerClass = org.scribe.builder.api.EvernoteApi.class;
+		        
+		    	  providerClass = org.scribe.builder.api.EvernoteApi.class;
+		      
 		      }
 		      @SuppressWarnings("unchecked")
-			OAuthService service = new ServiceBuilder()
+		      OAuthService service = new ServiceBuilder()
 		          .provider(providerClass)
 		          .apiKey(consumerKey)
 		          .apiSecret(consumerSecret)
@@ -113,72 +114,85 @@ public class EvernoteOAuthStepByStep extends DeclarativeWebScript {
 			  //TODO: inject with spring configuration
 
 		      try {
-		        if (ACTION_RESET.equals(action)) {
-		        	log.info("****** Resetting Session");
-		          	// Empty the server's stored session information for the current
-		          	// browser user so we can redo the test.
-		            session.removeValue(SESSION_ACCESS_TOKEN);
-		          	session.removeValue(SESSION_NOTE_STORE_URL);
-		          	session.removeValue(SESSION_REQUEAT_TOKEN_SECRET);
-		          	session.removeValue(SESSION_REQUEST_TOKEN);
-		          	session.removeValue(SESSION_VERIFIER);
+		    	  if (ACTION_RESET.equals(action)) {
+		        	
+		    		  log.debug("****** Resetting Session");
+		          	
+		    		  // Empty the server's stored session information for the current
+		          		// browser user so we can redo the test.
+		    		  session.removeValue(SESSION_ACCESS_TOKEN);
+		          	  session.removeValue(SESSION_NOTE_STORE_URL);
+		              session.removeValue(SESSION_REQUEAT_TOKEN_SECRET);
+		          	  session.removeValue(SESSION_REQUEST_TOKEN);
+		          	  session.removeValue(SESSION_VERIFIER);
 		          
-		          	accessToken = null;
-		          	requestToken = null;
-		          	verifier = null;
-		          	requestTokenSecret = null;
-		          	noteStoreUrl = null;
-		          	log.debug("****** Removed all attributes from user session");
+		          	  accessToken = null;
+		          	  requestToken = null;
+		          	  verifier = null;
+		          	  requestTokenSecret = null;
+		          	  noteStoreUrl = null;
+		          	  log.debug("****** Removed all attributes from user session");
 
-		        } else if (ACTION_GET_REQUEST_TOKEN.equals(action)) {
-		        	// Send an OAuth message to the Provider asking for a new Request
-		        	// Token because we don't have access to the current user's account.
-		        	Token scribeRequestToken = service.getRequestToken();
+		    	  } else if (ACTION_GET_REQUEST_TOKEN.equals(action)) {
+		        	
+		    		  // Send an OAuth message to the Provider asking for a new Request
+		    		  // Token because we don't have access to the current user's account.
+		    		  Token scribeRequestToken = service.getRequestToken();
 							
-		          	log.debug("****** GetRequestToken Reply: " + scribeRequestToken.getRawResponse() );
-		          	requestToken = scribeRequestToken.getToken();
-		          	requestTokenSecret = scribeRequestToken.getSecret();
-		          	session.setValue(SESSION_REQUEST_TOKEN, requestToken);
-		          	session.setValue(SESSION_REQUEAT_TOKEN_SECRET, scribeRequestToken.getSecret());
+		          	  log.debug("****** GetRequestToken Reply: " + scribeRequestToken.getRawResponse() );
+		          	  requestToken = scribeRequestToken.getToken();
+		          	  requestTokenSecret = scribeRequestToken.getSecret();
+		          	
+		          	  session.setValue(SESSION_REQUEST_TOKEN, requestToken);
+		          	  session.setValue(SESSION_REQUEAT_TOKEN_SECRET, scribeRequestToken.getSecret());
 
-		        } else if (ACTION_GET_ACCESS_TOKEN.equals(action)) {
-		        	// Send an OAuth message to the Provider asking to exchange the
-		        	// existing Request Token for an Access Token
-		        	Token scribeRequestToken = new Token(requestToken, requestTokenSecret);
-		          	Verifier scribeVerifier = new Verifier(verifier);
-		          	EvernoteAuthToken token = new EvernoteAuthToken(service.getAccessToken(scribeRequestToken, scribeVerifier));
-		          	log.debug("****** GetAccessToken Reply: " + token.getRawResponse() );
-		          	accessToken = token.getToken();
-		          	noteStoreUrl = token.getNoteStoreUrl();
-		          	session.setValue(SESSION_ACCESS_TOKEN, accessToken);
-		          	session.setValue(SESSION_NOTE_STORE_URL, noteStoreUrl);
+		    	  } else if (ACTION_GET_ACCESS_TOKEN.equals(action)) {
+		        	
+		    		  // Send an OAuth message to the Provider asking to exchange the
+		        	  // existing Request Token for an Access Token
+		        	  Token scribeRequestToken = new Token(requestToken, requestTokenSecret);
+		          	  Verifier scribeVerifier = new Verifier(verifier);
+		          	  EvernoteAuthToken token = new EvernoteAuthToken(service.getAccessToken(scribeRequestToken, scribeVerifier));
+		          	  log.debug("****** GetAccessToken Reply: " + token.getRawResponse() );
+		          	
+		          	  accessToken = token.getToken();
+		          	  noteStoreUrl = token.getNoteStoreUrl();
+		          	
+		          	  session.setValue(SESSION_ACCESS_TOKEN, accessToken);
+		          	  session.setValue(SESSION_NOTE_STORE_URL, noteStoreUrl);
 		         
-		        } else if (ACTION_CALL_BACK_RETURN.equals(action)) {
-		        	requestToken = req.getParameter(REQ_PARAM_OAUTH_TOKEN);
-		          	verifier = req.getParameter(REQ_PARAM_OAUTH_VERIFIER);
-		          	session.setValue(SESSION_VERIFIER, verifier);
-		          	log.debug("****** CallBackReturn verifier: " +  verifier);
+		    	  } else if (ACTION_CALL_BACK_RETURN.equals(action)) {
+		        	
+		        	  requestToken = req.getParameter(REQ_PARAM_OAUTH_TOKEN);
+		          	  verifier = req.getParameter(REQ_PARAM_OAUTH_VERIFIER);
+		          	  session.setValue(SESSION_VERIFIER, verifier);
+		          	  log.debug("****** CallBackReturn verifier: " +  verifier);
 			      
-		        } else if ("listNotebooks".equals(action)) {
-		        	noteStoreUrl = (String)session.getValue("noteStoreUrl");
-		            log.debug("****** Listing notebooks from: " + noteStoreUrl);
-		            THttpClient noteStoreTrans = new THttpClient(noteStoreUrl);
-		            TBinaryProtocol noteStoreProt = new TBinaryProtocol(noteStoreTrans);
-		            NoteStore.Client noteStore = new NoteStore.Client(noteStoreProt, noteStoreProt);
-		            List<?> notebooks = noteStore.listNotebooks(accessToken);
-		            model.put("notebooks", notebooks);
-		            for (Object notebook : notebooks) {
-		            	log.debug("Notebook: " + ((Notebook)notebook).getName());
-		            }
+		    	  } else if ("listNotebooks".equals(action)) {
+		        	
+		        	  noteStoreUrl = (String)session.getValue("noteStoreUrl");
+		              log.debug("****** Listing notebooks from: " + noteStoreUrl);
+		              THttpClient noteStoreTrans = new THttpClient(noteStoreUrl);
+		              TBinaryProtocol noteStoreProt = new TBinaryProtocol(noteStoreTrans);
+		              NoteStore.Client noteStore = new NoteStore.Client(noteStoreProt, noteStoreProt);
 		            
-		          }
-		      } catch (Exception e) {
-		        e.printStackTrace();
+		              List<?> notebooks = noteStore.listNotebooks(accessToken);
+		              model.put("notebooks", notebooks);
+		            
+		              for (Object notebook : notebooks) {
+		            	
+		            	  log.debug("Notebook: " + ((Notebook)notebook).getName());
+		            
+		              }  
+		        }
+		    } catch (Exception e) {
+		        
+		    	e.printStackTrace();
 		        throw new WebScriptException("Could not authenticate Evernote");
-		      }
-
+		      
+		    }
 		  }
-		  
+		         
 		  model.put("consumerKey", consumerKey);
 		  model.put("accessTokenUrl", accessTokenUrl);
 		  model.put("requestTokenUrl", requestTokenUrl);

@@ -24,34 +24,44 @@ import org.springframework.extensions.webscripts.json.JSONWriter;
 @SuppressWarnings("deprecation")
 public class EverfrescoUserFactory extends SlingshotUserFactory {
 
-	public static final String PROPERTY_EVERFRESCO_USERNAME = "{http://www.alfresco.com/model/everfresco/1.0}efUserName";
-	public static final String PROPERTY_EVERFRESCO_PASSWORD = "{http://www.alfresco.com/model/everfresco/1.0}efPassword";
+	public static final String PROPERTY_EVERFRESCO_USERNAME = 
+		"{http://www.alfresco.com/model/everfresco/1.0}efUserName";
+	public static final String PROPERTY_EVERFRESCO_PASSWORD = 
+		"{http://www.alfresco.com/model/everfresco/1.0}efPassword";
+	
 	public static final String PROP_EF_USERNAME = "efUserName";
 	public static final String PROP_EF_PASSWORD = "efPassword";
 	
     @Override
     protected AlfrescoUser constructUser(JSONObject properties, Map<String, Boolean> capabilities,
             Map<String, Boolean> immutability) throws JSONException {
-        AlfrescoUser user = super.constructUser(properties, capabilities, immutability);
+        
+    	AlfrescoUser user = super.constructUser(properties, capabilities, immutability);
         user.setProperty(PROP_EF_USERNAME, properties.has(PROPERTY_EVERFRESCO_USERNAME) 
         		? properties.getString(PROPERTY_EVERFRESCO_USERNAME) : null);
         user.setProperty(PROP_EF_PASSWORD, properties.has(PROPERTY_EVERFRESCO_PASSWORD) 
         		? properties.getString(PROPERTY_EVERFRESCO_PASSWORD) : null);
         return user;
+        
     }
 
     @Override
     public void saveUser(AlfrescoUser user) throws UserFactoryException {
-        RequestContext context = (RequestContext)ThreadLocalRequestContext.getRequestContext();
-        if (!context.getUserId().equals(user.getId())) {
-            throw new UserFactoryException("Unable to persist user with different Id that current Id.");
-        }
+        
+    	RequestContext context = (RequestContext)ThreadLocalRequestContext.getRequestContext();
+        
+    	if (!context.getUserId().equals(user.getId())) {
+            
+    		throw new UserFactoryException("Unable to persist user with different Id that current Id.");
+        
+    	}
         
         StringBuilderWriter buf = new StringBuilderWriter(512);
         JSONWriter writer = new JSONWriter(buf);
         
         try {
-            writer.startObject();
+            
+        	writer.startObject();
             
             writer.writeValue("username", user.getId());
             
@@ -93,17 +103,26 @@ public class EverfrescoUserFactory extends SlingshotUserFactory {
 		    writer.endObject();
 		    
 		    Connector conn = FrameworkUtil.getConnector(context, ALFRESCO_ENDPOINT_ID);
+		    
 		    ConnectorContext c = new ConnectorContext(HttpMethod.POST);
 		    c.setContentType("application/json");
+		    
 		    Response res = conn.call("/slingshot/profile/userprofile", c,
 		            new ByteArrayInputStream(buf.toString().getBytes()));
+		    
 		    if (Status.STATUS_OK != res.getStatus().getCode()) {
-		        throw new UserFactoryException("Remote error during User save: " + res.getStatus().getMessage());
+		       
+		    	throw new UserFactoryException("Remote error during User save: " + res.getStatus().getMessage());
+		    
 		    }
 		} catch (IOException ioErr) {
-		    throw new UserFactoryException("IO error during User save: " + ioErr.getMessage(), ioErr);
+		    
+			throw new UserFactoryException("IO error during User save: " + ioErr.getMessage(), ioErr);
+		
 		} catch (ConnectorServiceException cse)	{
-		    throw new UserFactoryException("Configuration error during User save: " + cse.getMessage(), cse);
+		    
+			throw new UserFactoryException("Configuration error during User save: " + cse.getMessage(), cse);
+		
 		}
 	}
 }

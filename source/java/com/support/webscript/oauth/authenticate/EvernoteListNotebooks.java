@@ -17,7 +17,7 @@ import org.springframework.extensions.webscripts.WebScriptSession;
 
 public class EvernoteListNotebooks extends AbstractWebScript {
 
-	Logger log = Logger.getLogger(this.getClass()); 
+	private Logger log = Logger.getLogger(this.getClass()); 
 
 	static final String SESSION_ACCESS_TOKEN = "accessToken";
 	static final String SESSION_NOTE_STORE_URL = "noteStoreUrl";
@@ -26,47 +26,52 @@ public class EvernoteListNotebooks extends AbstractWebScript {
 	@Override
 	public void execute(WebScriptRequest req, WebScriptResponse res) 
 	{
-		  log.debug("****** Inside the Evernote List Webscript ******");
 		  
-		  WebScriptSession session = req.getRuntime().getSession();
-		  String accessToken = (String)session.getValue(SESSION_ACCESS_TOKEN);
-		  String noteStoreUrl = (String)session.getValue(SESSION_NOTE_STORE_URL);
+		log.debug("****** Inside the Evernote List Webscript ******");
 		  
-		  log.debug("****** accesstoken: "+accessToken);
-		  log.debug("****** noteStoreUrl: "+noteStoreUrl);
+		WebScriptSession session = req.getRuntime().getSession();
+		String accessToken = (String)session.getValue(SESSION_ACCESS_TOKEN);
+		String noteStoreUrl = (String)session.getValue(SESSION_NOTE_STORE_URL);
 		  
-		  if (accessToken == null || noteStoreUrl == null) {
+		log.debug("****** accesstoken: "+accessToken);
+		log.debug("****** noteStoreUrl: "+noteStoreUrl);
+		  
+		if (accessToken == null || noteStoreUrl == null) {
 		
 			  log.debug("Evernote Access Token is not in session");
 			  throw new WebScriptException("Evernote Access Token is not in session");
 		
-		  } else {
+		} else {
 			  
-		      try {
+		    try {
 		  
-		            log.debug("****** Listing notebooks from: " + noteStoreUrl);
-		            THttpClient noteStoreTrans = new THttpClient(noteStoreUrl);
-		            TBinaryProtocol noteStoreProt = new TBinaryProtocol(noteStoreTrans);
-		            NoteStore.Client noteStore = new NoteStore.Client(noteStoreProt, noteStoreProt);
-		            List<?> notebooks = noteStore.listNotebooks(accessToken);
-	            	// build a json object
-	    	    	JSONObject obj = new JSONObject();
-	    	    	// put some data on it
-		            for (Object notebook : notebooks) {
-		            	log.debug("Notebook: " + ((Notebook)notebook).getName());
-		    	    	obj.put(((Notebook)notebook).getGuid(), ((Notebook)notebook).getName());
-		            }
+		    	log.debug("****** Listing notebooks from: " + noteStoreUrl);
+		        THttpClient noteStoreTrans = new THttpClient(noteStoreUrl);
+		        TBinaryProtocol noteStoreProt = new TBinaryProtocol(noteStoreTrans);
+		        NoteStore.Client noteStore = new NoteStore.Client(noteStoreProt, noteStoreProt);
+	            List<?> notebooks = noteStore.listNotebooks(accessToken);
+            	
+	            // build a json object
+	            JSONObject obj = new JSONObject();
+    	    	
+	            // put some data on it
+	            for (Object notebook : notebooks) {
+	            	
+	            	log.debug("Notebook: " + ((Notebook)notebook).getName());
+	    	    	obj.put(((Notebook)notebook).getGuid(), ((Notebook)notebook).getName());
+	            
+	            }
 
-	    	    	// build a JSON string and send it back
-	    	    	String jsonString = obj.toString();
-	    	    	res.getWriter().write(jsonString);
+    	    	// build a JSON string and send it back
+    	    	String jsonString = obj.toString();
+    	    	res.getWriter().write(jsonString);
 		            
 		      } catch (Exception e) {
-		        e.printStackTrace();
-		        throw new WebScriptException("Could not authenticate Evernote");
+		        
+		    	  e.printStackTrace();
+		    	  throw new WebScriptException("Could not authenticate Evernote");
+		      
 		      }
-
-		  }
-		  
-	  }
+		}
+	}
 }	  
