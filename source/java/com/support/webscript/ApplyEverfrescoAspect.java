@@ -78,10 +78,11 @@ public class ApplyEverfrescoAspect extends AbstractWebScript {
 			}
 		
 		}else{
-		
-			nodeRef = new NodeRef(nodeRefStr);
-			if (nodeRef==null)
+
+			if (nodeRefStr==null || nodeRefStr.isEmpty())
 				throw new WebScriptException("Noderef not found");
+
+			nodeRef = new NodeRef(nodeRefStr);
 		}
 		
 		try
@@ -97,7 +98,7 @@ public class ApplyEverfrescoAspect extends AbstractWebScript {
 	    	
 	    	for (Channel c:channels) {
 	    		
-	    		c.getId();
+	    		//c.getId();
 	    		
 	    		if (c.getChannelType().getId() == "everfresco") {
 	    			
