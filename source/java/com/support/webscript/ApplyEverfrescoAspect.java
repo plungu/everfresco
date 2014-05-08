@@ -80,7 +80,8 @@ public class ApplyEverfrescoAspect extends AbstractWebScript {
 		}else{
 		
 			nodeRef = new NodeRef(nodeRefStr);
-		
+			if (nodeRef==null)
+				throw new WebScriptException("Noderef not found");
 		}
 		
 		try
