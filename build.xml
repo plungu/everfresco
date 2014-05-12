@@ -35,7 +35,7 @@
     
     <target name="package-jar" depends="compile">
         <jar destfile="${jar.file}" >
-            <fileset dir="${build.dir}/classes" excludes="**/custom*,**/*Test*" includes="**/*.class" />
+            <fileset dir="${build.dir}/classes" excludes="**/custom*,**/*Test*" includes="**/*.class,**/*.png" />
         </jar>
     </target>
 
@@ -44,6 +44,7 @@
             <fileset dir="${project.dir}/source" includes="web/**/*.*" />
             <fileset dir="${project.dir}" includes="lib/*.jar" />
             <fileset dir="${project.dir}/build" includes="lib/*.jar" />
+            <fileset dir="${project.dir}" includes="config/alfresco/messages/**/*.*" excludes="" />
             <fileset dir="${project.dir}" includes="config/alfresco/web-extension/**/*.*"  />
             <fileset dir="${project.dir}/config/alfresco/module/everfresco" includes="module.properties" />
         </zip>
