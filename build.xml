@@ -18,7 +18,7 @@
     <path id="class.path">
         <dirset dir="${build.dir}" />
         <fileset dir="lib" includes="**/*.jar"/>
-    	<fileset dir="${alfresco.sdk.dir}/lib/server" includes="**/*.jar" />
+    	<fileset dir="${alfresco.sdk.dir}/lib/" includes="**/*.jar" />
     	<!--
     	<fileset dir="../JettyEmbedded/webapps/alfresco/WEB-INF/lib" includes="**/*.jar"/>
         <fileset dir="../JettyEmbedded/webapps/alfresco/WEB-INF/classes" includes="**/*.*"/>
