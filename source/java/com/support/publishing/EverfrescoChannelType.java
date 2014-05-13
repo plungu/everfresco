@@ -44,27 +44,16 @@ public class EverfrescoChannelType extends AbstractChannelType {
 	Logger log = Logger.getLogger(this.getClass()); 
 	
 	public final static String ID = "everfresco";
-	public static final String NAMESPACE = "http://www.alfresco.com/model/everfresco/1.0";
 	public static final String PREFIX = "ef";
-	public static final QName TYPE_DELIVERY_CHANNEL = QName.createQName(NAMESPACE, "DeliveryChannel");
-    public static final QName ASPECT_DELIVERY_CHANNEL = QName.createQName(NAMESPACE, "DeliveryChannelAspect");
-    
-	//TODO: MAKE MSG PROPERTIES with spring config
-	/*
-	 * Fill in your Evernote API key. To get an API key, go to
-	 * http://dev.evernote.com/documentation/cloud/
-	 */
-	static final String consumerKey = "plungu";
-	static final String consumerSecret = "f3716cbcf05aae1b";
-  
+	
 	/*
 	 * Replace this value with https://www.evernote.com to switch from the Evernote
 	 * sandbox server to the Evernote production server.
 	 */
-	static final String urlBase = "https://sandbox.evernote.com";	  
+	static String urlBase = "https://sandbox.evernote.com";	  
 	static final String requestTokenUrl = urlBase + "/oauth";
 	static final String accessTokenUrl = urlBase + "/oauth";
-	static final String authorizationUrlBase = urlBase + "/OAuth.action"; //Change this to use alfresco server port
+	static final String authorizationUrlBase = urlBase + "/OAuth.action"; 
 	
 	static final String REQ_PARAM_ACTION = "action";
 	static final String REQ_PARAM_OAUTH_TOKEN = "oauth_token";
@@ -99,7 +88,7 @@ public class EverfrescoChannelType extends AbstractChannelType {
 
 	@Override
 	public QName getChannelNodeType() {
-		return TYPE_DELIVERY_CHANNEL;
+		return EverfrescoModel.TYPE_EVERFRESCO_DELIVERY_CHANNEL;
 	}
 
 	@Override
@@ -123,26 +112,37 @@ public class EverfrescoChannelType extends AbstractChannelType {
     {
     	@SuppressWarnings("rawtypes")
 		Class providerClass = org.scribe.builder.api.EvernoteApi.Sandbox.class;
-	    if (urlBase.equals("https://www.evernote.com")) {
+    	
+    	Serializable useSandbox = channel.getProperties().get(EverfrescoModel.PROPERTY_EVERFRESCO_USE_SANDBOX);
+    	boolean useSandBox = Boolean.parseBoolean(useSandbox.toString());
+	    if ( useSandbox != null && !useSandBox ) {
+	    	urlBase = "https://www.evernote.com";
 	    	providerClass = org.scribe.builder.api.EvernoteApi.class;
 	    }
-	      
-	      //TODO: inject with spring configuration
-	    service = new ServiceBuilder()
-	       	.provider(providerClass)
-	       	.apiKey(consumerKey)
-	        .apiSecret(consumerSecret)
-	        .callback(callbackUrl)
-	        .build();
-		  //TODO: inject with spring configuration
-	      
-		log.debug("****** Callback URL: "+callbackUrl);
+	    
+	    Serializable consumerKey = channel.getProperties().get(EverfrescoModel.PROPERTY_EVERFRESCO_CONSUMER_KEY);
+	    Serializable consumerSecret = channel.getProperties().get(EverfrescoModel.PROPERTY_EVERFRESCO_CONSUMER_SECRET);
+	    
+	    if ( (consumerKey != null || consumerSecret != null))
+	    { 
+		    log.info("consumer key: " + consumerKey);
+		    log.info("consumer secret: " + consumerSecret);
+		    
+		    //TODO: inject with spring configuration
+		    service = new ServiceBuilder()
+		       	.provider(providerClass)
+		       	.apiKey(consumerKey.toString())
+		        .apiSecret(consumerSecret.toString())
+		        .callback(callbackUrl)
+		        .build();
+			  	    }    	
+		log.info("****** Callback URL: "+callbackUrl);
 
 		Token scribeRequestToken = service.getRequestToken();
 		String requestToken = scribeRequestToken.getToken();
 		String requestTokenSecret = scribeRequestToken.getSecret();
 		
-		log.debug("****** GetRequestToken: " + scribeRequestToken.getRawResponse() );
+		log.info("****** GetRequestToken: " + scribeRequestToken.getRawResponse() );
 
         if (requestToken != null && requestTokenSecret != null) {
         	
@@ -157,10 +157,8 @@ public class EverfrescoChannelType extends AbstractChannelType {
 		// Send an OAuth message to the Provider asking to exchange the
 		// existing Request Token for an Access Token
 		String authorizationUrl = authorizationUrlBase + "?oauth_token=" + requestToken;		          			          	
-		log.debug("****** Redirecting to: " + authorizationUrl );
+		log.info("****** Redirecting to: " + authorizationUrl );
 
-		// Returning a null as the authorization request URL here to indicate that we should use our own
-		// credential-gathering mechanism.
 		return new AuthUrlPair(authorizationUrl, callbackUrl);
     }
     
@@ -172,47 +170,54 @@ public class EverfrescoChannelType extends AbstractChannelType {
         String accessToken = null;
         String noteStoreUrl = null;
         
-        if (callbackParams.containsKey("access_token")) {
-            //We have been given the access token directly.
-            accessToken = callbackParams.get("access_token")[0];
-        } else if (callbackParams.containsKey(REQ_PARAM_OAUTH_VERIFIER)) {
-        	
-        	String requestToken;
-        	String requestTokenSecret;
-        	
-        	requestToken = channel.getProperties().get(PublishingModel.PROP_ACCESS_TOKEN).toString();
-        	log.debug("****** Encrytped requestToken: " + requestToken );
-        	requestToken = getEncryptor().decrypt(PublishingModel.PROP_ACCESS_TOKEN, requestToken).toString();
-        	log.debug("****** requestToken: " + requestToken );
-        	
-        	requestTokenSecret = channel.getProperties().get(PublishingModel.PROP_ACCESS_SECRET).toString();
-        	log.debug("****** Encrytped requestTokenSecret: " + requestTokenSecret );
-        	requestTokenSecret = getEncryptor().decrypt(PublishingModel.PROP_ACCESS_SECRET, requestTokenSecret).toString();
-        	log.debug("****** requestTokenSecret: " + requestTokenSecret );
-
-        	//requestToken = req.getParameter(REQ_PARAM_OAUTH_TOKEN);
-          	String verifier = callbackParams.get(REQ_PARAM_OAUTH_VERIFIER)[0];
-        
-          	//We have been passed an authorization code that needs to be exchanged for a token
-          	Verifier scribeVerifier = new Verifier(verifier);
-          	log.debug("****** Scribe Verifier: " + scribeVerifier.getValue() );
-          	
-          	Token scribeRequestToken = new Token(requestToken, requestTokenSecret);
-          	log.debug("****** Scribe RequestToken: " + scribeRequestToken.getToken() );
-          	
-          	EvernoteAuthToken token = new EvernoteAuthToken(service.getAccessToken(scribeRequestToken, scribeVerifier));
-          	log.debug("****** GetAccessToken Reply: " + token.getRawResponse() );
-          	
-          	accessToken = token.getToken();
-          	noteStoreUrl = token.getNoteStoreUrl();
+        try 
+        {
+	        if (callbackParams.containsKey("access_token")) {
+	            //We have been given the access token directly.
+	            accessToken = callbackParams.get("access_token")[0];
+	        } else if (callbackParams.containsKey(REQ_PARAM_OAUTH_VERIFIER)) {
+	        	
+	        	String requestToken;
+	        	String requestTokenSecret;
+	        	
+	        	requestToken = channel.getProperties().get(PublishingModel.PROP_ACCESS_TOKEN).toString();
+	        	log.debug("****** Encrytped requestToken: " + requestToken );
+	        	requestToken = getEncryptor().decrypt(PublishingModel.PROP_ACCESS_TOKEN, requestToken).toString();
+	        	log.debug("****** requestToken: " + requestToken );
+	        	
+	        	requestTokenSecret = channel.getProperties().get(PublishingModel.PROP_ACCESS_SECRET).toString();
+	        	log.debug("****** Encrytped requestTokenSecret: " + requestTokenSecret );
+	        	requestTokenSecret = getEncryptor().decrypt(PublishingModel.PROP_ACCESS_SECRET, requestTokenSecret).toString();
+	        	log.debug("****** requestTokenSecret: " + requestTokenSecret );
+	
+	        	//requestToken = req.getParameter(REQ_PARAM_OAUTH_TOKEN);
+	          	String verifier = callbackParams.get(REQ_PARAM_OAUTH_VERIFIER)[0];
+	        
+	          	//We have been passed an authorization code that needs to be exchanged for a token
+	          	Verifier scribeVerifier = new Verifier(verifier);
+	          	log.debug("****** Scribe Verifier: " + scribeVerifier.getValue() );
+	          	
+	          	Token scribeRequestToken = new Token(requestToken, requestTokenSecret);
+	          	log.debug("****** Scribe RequestToken: " + scribeRequestToken.getToken() );
+	          	
+	          	EvernoteAuthToken token = new EvernoteAuthToken(service.getAccessToken(scribeRequestToken, scribeVerifier));
+	          	log.debug("****** GetAccessToken Reply: " + token.getRawResponse() );
+	          	
+	          	accessToken = token.getToken();
+	          	noteStoreUrl = token.getNoteStoreUrl();
+	        }
+        }catch(Exception e){
+        	e.printStackTrace();
         }
-        
+	        
         if (accessToken != null) {
             Map<QName,Serializable> channelProps = new HashMap<QName, Serializable>();
             channelProps.put(PublishingModel.PROP_OAUTH2_TOKEN, accessToken);
             channelProps.put(PublishingModel.PROP_ASSET_URL, noteStoreUrl);
             getChannelService().updateChannel(channel, channelProps);
             authorised = AuthStatus.AUTHORISED;
+        }else{
+        	authorised = AuthStatus.UNAUTHORISED;
         }
         
         return authorised;

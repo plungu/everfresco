@@ -55,60 +55,24 @@
           </dependencies>
     </config>
 
-   <!-- For rae:documentary aspect -->
-<!--    <config evaluator="aspect" condition="rae:documentary"> -->
-<!--        <forms> -->
-<!-- 	       <form> -->
-<!-- 	           <field-visibility> -->
-<!-- 				   rae:documentary aspect -->
-<!-- 				   <show id="rae:docOrganization"/> -->
-<!-- 				   <show id="rae:docDepartment"/> -->
-<!-- 				   <show id="rae:docFunctionalArea"/> -->
-<!-- 				   <show id="rae:docSubFunctionalArea"/> -->
-				   
-<!-- 				   <show id="rae:docDocumentCategory"/> -->
-<!-- 				   <show id="rae:docDocumentType"/> -->
-<!-- 				   <show id="rae:docVersion"/> -->
-<!-- 				   <show id="rae:docIsSourceFile"/> -->
-				   
-				   
-<!-- 				   <show id="rae:docKeywords"/> -->
-				   
-<!-- 				   <show id="rae:docState"/> -->
-<!-- 				   <show id="rae:docPolicy"/> -->
-<!-- 				   <show id="rae:docTemplate"/> -->
-<!-- 				   <show id="rae:docApprovalCode"/> -->
-				   
-<!-- 				   <show id="rae:docApprovers"/> -->
-<!-- 				   <show id="rae:docEffectiveDate"/> -->
-<!-- 				   <show id="rae:docAbolitionDate"/> -->
-<!-- 	           </field-visibility> -->
-<!-- 	           <appearance> 				     -->
-<!-- 				   <set id="rae_documentary_set" appearance="title" label="RAE Documentary" /> -->
-<!-- 				   <field set="rae_documentary_set" id="rae:docOrganization"/> -->
-<!-- 				   <field set="rae_documentary_set" id="rae:docDepartment"/> -->
-<!-- 				   <field set="rae_documentary_set" id="rae:docFunctionalArea"/> -->
-<!-- 				   <field set="rae_documentary_set" id="rae:docSubFunctionalArea"/> -->
-				   
-<!-- 				   <field set="rae_documentary_set" id="rae:docDocumentCategory"/> -->
-<!-- 				   <field set="rae_documentary_set" id="rae:docDocumentType"/> -->
-<!-- 				   <field set="rae_documentary_set" id="rae:docVersion"/> -->
-<!-- 				   <field set="rae_documentary_set" id="rae:docIsSourceFile"/> -->
-				   
-<!-- 				   <field set="rae_documentary_set" id="rae:docKeywords"/> -->
-				   
-<!-- 				   <field set="rae_documentary_set" id="rae:docState"			read-only="true"/> -->
-<!-- 				   <field set="rae_documentary_set" id="rae:docPolicy"			read-only="true"/> -->
-<!-- 				   <field set="rae_documentary_set" id="rae:docTemplate"		read-only="true"/> -->
-<!-- 				   <field set="rae_documentary_set" id="rae:docApprovalCode" 	read-only="true"/> -->
-				   
-<!-- 				   <field set="rae_documentary_set" id="rae:docApprovers" 		read-only="true"/> -->
-<!-- 				   <field set="rae_documentary_set" id="rae:docEffectiveDate"	read-only="true"/> -->
-<!-- 				   <field set="rae_documentary_set" id="rae:docAbolitionDate"	read-only="true"/> -->
-<!--                </appearance> -->
-<!--           </form> -->
-<!-- 	   </forms> -->
-<!--    </config> -->
+   <!-- For ef:DeliveryChannel type form config -->
+   <config evaluator="node-type" condition="ef:DeliveryChannel">
+       <forms>
+	       <form>
+	           <field-visibility>
+				   <show id="cm:name" />
+				   <show id="ef:consumerKey"/>
+				   <show id="ef:consumerSecret"/>
+				   <show id="ef:useSandbox"/>
+	           </field-visibility>
+	           <appearance> 				    
+		          <field id="ef:consumerKey"  label-id="ef.consumerKey"/>
+		          <field id="ef:consumerSecret"  label-id="ef.consumerSecret"/>
+		          <field id="ef:useSandbox"  label-id="ef.useSandbox"/>
+               </appearance>
+          </form>
+	   </forms>
+   </config>
    
    <!-- Document Library Actions config section -->
    <config evaluator="string-compare" condition="DocLibActions">

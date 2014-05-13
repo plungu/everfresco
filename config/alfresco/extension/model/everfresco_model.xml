@@ -17,8 +17,6 @@
          <description>Node type used to represent marklogic delivery channels </description>
          <parent>pub:DeliveryChannel</parent>
          <mandatory-aspects>
-            <aspect>ef:person</aspect>
-            <aspect>ef:syncable</aspect>
             <aspect>ef:DeliveryChannelAspect</aspect>
          </mandatory-aspects>
       </type>
@@ -61,10 +59,7 @@
 					<type>d:date</type>
 				</property>
 				
-				<property name="ef:synced">
-					<type>d:boolean</type>
-					<default>false</default>
-				</property>
+
 			</properties>
 		
 		</aspect>
@@ -73,6 +68,21 @@
          <title>Everfresco Delivery Channel Aspect</title>
          <description>Applied to a node that represents a Everfresco delivery channel</description>
          <parent>pub:OAuth2DeliveryChannelAspect</parent>
+         <properties>
+         	<property name="ef:consumerKey">
+			    <type>d:text</type>
+			</property>
+				
+			<property name="ef:consumerSecret">
+			    <type>d:text</type>
+			</property>
+				
+	       	 <property name="ef:useSandbox">
+				<type>d:boolean</type>
+				<default>true</default>
+			</property>
+			
+		 </properties>	
       </aspect>
   
 	</aspects>
