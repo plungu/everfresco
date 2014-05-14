@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="Everfresco build" default="package-amp" basedir=".">
+<project name="Everfresco build" default="dist-amps" basedir=".">
 	
     <property name="project.dir" value="."/>
     <property file="${project.dir}/build.properties"/>
@@ -36,10 +36,11 @@
     <target name="package-jar" depends="compile">
         <jar destfile="${jar.file}" >
             <fileset dir="${build.dir}/classes" excludes="**/custom*,**/*Test*" includes="**/*.class,**/*.png" />
+        	<fileset dir="${project.dir}/source/java" includes="**/*.png"/>
         </jar>
     </target>
 
-    <target name="package-share-amp" depends="mkdirs" description="Package the Module" >
+    <target name="package-share-amp" depends="mkdirs, package-jar" description="Package the Module" >
         <zip destfile="${amp.share}" >
             <fileset dir="${project.dir}/source" includes="web/**/*.*" />
             <fileset dir="${project.dir}" includes="lib/*.jar" />
@@ -60,7 +61,12 @@
             <fileset dir="${project.dir}/config/alfresco/module/everfresco" includes="module.properties" />
         </zip>
     </target>
-
+	
+	<target name="dist-amps" depends="package-amp" description="move amps to project dir">
+		<copy file="${build.dir}/dist/everfresco_repo.amp" todir="${project.dir}" overwrite="true" />
+		<copy file="${build.dir}/dist/everfresco_share.amp" todir="${project.dir}" overwrite="true" />
+	</target>
+	
     <target name="update-war" depends="package-amp" description="Update the WAR file.  Set -Dwar.file=..." >
         <echo>Installing SDK Demo AMP into WAR</echo>
         <java dir="." fork="true" classname="org.alfresco.repo.module.tool.ModuleManagementTool">
