@@ -113,6 +113,8 @@ public class EverfrescoChannelType extends AbstractChannelType {
     	@SuppressWarnings("rawtypes")
 		Class providerClass = org.scribe.builder.api.EvernoteApi.Sandbox.class;
     	
+    	String authorizationUrl = "";
+    	
     	Serializable useSandbox = channel.getProperties().get(EverfrescoModel.PROPERTY_EVERFRESCO_USE_SANDBOX);
     	boolean useSandBox = Boolean.parseBoolean(useSandbox.toString());
 	    if ( useSandbox != null && !useSandBox ) {
@@ -120,45 +122,45 @@ public class EverfrescoChannelType extends AbstractChannelType {
 	    	providerClass = org.scribe.builder.api.EvernoteApi.class;
 	    }
 	    
-	    Serializable consumerKey = channel.getProperties().get(EverfrescoModel.PROPERTY_EVERFRESCO_CONSUMER_KEY);
-	    Serializable consumerSecret = channel.getProperties().get(EverfrescoModel.PROPERTY_EVERFRESCO_CONSUMER_SECRET);
-	    
-	    if ( (consumerKey != null || consumerSecret != null))
-	    { 
-		    log.info("consumer key: " + consumerKey);
-		    log.info("consumer secret: " + consumerSecret);
+		    Serializable consumerKey = channel.getProperties().get(EverfrescoModel.PROPERTY_EVERFRESCO_CONSUMER_KEY);
+		    Serializable consumerSecret = channel.getProperties().get(EverfrescoModel.PROPERTY_EVERFRESCO_CONSUMER_SECRET);
 		    
-		    //TODO: inject with spring configuration
-		    service = new ServiceBuilder()
-		       	.provider(providerClass)
-		       	.apiKey(consumerKey.toString())
-		        .apiSecret(consumerSecret.toString())
-		        .callback(callbackUrl)
-		        .build();
-			  	    }    	
-		log.info("****** Callback URL: "+callbackUrl);
-
-		Token scribeRequestToken = service.getRequestToken();
-		String requestToken = scribeRequestToken.getToken();
-		String requestTokenSecret = scribeRequestToken.getSecret();
-		
-		log.info("****** GetRequestToken: " + scribeRequestToken.getRawResponse() );
-
-        if (requestToken != null && requestTokenSecret != null) {
-        	
-            Map<QName,Serializable> channelProps = new HashMap<QName, Serializable>();
-            channelProps.put(PublishingModel.PROP_ACCESS_TOKEN, requestToken);
-            channelProps.put(PublishingModel.PROP_ACCESS_SECRET, requestTokenSecret);
-            channelProps = getEncryptor().encrypt(channelProps);
-            getChannelService().updateChannel(channel, channelProps);
-            
-        }
-        
-		// Send an OAuth message to the Provider asking to exchange the
-		// existing Request Token for an Access Token
-		String authorizationUrl = authorizationUrlBase + "?oauth_token=" + requestToken;		          			          	
-		log.info("****** Redirecting to: " + authorizationUrl );
-
+		    if ( (consumerKey != null || consumerSecret != null))
+		    { 
+			    log.info("consumer key: " + consumerKey);
+			    log.info("consumer secret: " + consumerSecret);
+			    
+			    //TODO: inject with spring configuration
+			    service = new ServiceBuilder()
+			       	.provider(providerClass)
+			       	.apiKey(consumerKey.toString())
+			        .apiSecret(consumerSecret.toString())
+			        .callback(callbackUrl)
+			        .build();  	
+		    
+			log.info("****** Callback URL: "+callbackUrl);
+	
+			Token scribeRequestToken = service.getRequestToken();
+			String requestToken = scribeRequestToken.getToken();
+			String requestTokenSecret = scribeRequestToken.getSecret();
+			
+			log.info("****** GetRequestToken: " + scribeRequestToken.getRawResponse() );
+	
+	        if (requestToken != null && requestTokenSecret != null) {
+	        	
+	            Map<QName,Serializable> channelProps = new HashMap<QName, Serializable>();
+	            channelProps.put(PublishingModel.PROP_ACCESS_TOKEN, requestToken);
+	            channelProps.put(PublishingModel.PROP_ACCESS_SECRET, requestTokenSecret);
+	            channelProps = getEncryptor().encrypt(channelProps);
+	            getChannelService().updateChannel(channel, channelProps);
+	            
+	        }
+	        
+			// Send an OAuth message to the Provider asking to exchange the
+			// existing Request Token for an Access Token
+			authorizationUrl = authorizationUrlBase + "?oauth_token=" + requestToken;		          			          	
+			log.info("****** Redirecting to: " + authorizationUrl );
+    	}
 		return new AuthUrlPair(authorizationUrl, callbackUrl);
     }
     
