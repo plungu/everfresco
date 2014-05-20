@@ -47,7 +47,7 @@
             <fileset dir="${project.dir}/build" includes="lib/*.jar" />
             <fileset dir="${project.dir}" includes="config/alfresco/messages/**/*.*" excludes="" />
             <fileset dir="${project.dir}" includes="config/alfresco/web-extension/**/*.*"  />
-            <fileset dir="${project.dir}/config/alfresco/module/everfresco" includes="module.properties" />
+            <fileset dir="${project.dir}/config/alfresco/module/everfresco" includes="*.properties" />
         </zip>
     </target>
 
