@@ -291,6 +291,7 @@ public class EverfrescoChannelType extends AbstractChannelType {
         	PDFTransformer pdfXform = new PDFTransformer();
     		String pdfDocument = "/home/support/Downloads/Supported Platforms for Alfresco Enterprise 4.2.x.pdf";
     		pdfXform.setDocument(pdfDocument);
+    		pdfXform.setTitle(title.toString());
     		
     		try {
 				
@@ -301,7 +302,8 @@ public class EverfrescoChannelType extends AbstractChannelType {
 			            + "<en-note>" 
 			            + content
 			            + "</en-note>";
-			        note.setContent(enmlContent);
+				log.debug(enmlContent);
+			    note.setContent(enmlContent);
 			        
 			        
 			} catch (FileNotFoundException e) {
