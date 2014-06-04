@@ -5,12 +5,13 @@ import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import com.support.transformation.PDFTransformer;
+//import com.support.transformation.PDFTransformer;
 
 public class PDFTransformerTest {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException, ParserConfigurationException {
 	
+		/*
 		String pdfDocument = "/home/support/Downloads/Supported Platforms for Alfresco Enterprise 4.2.x.pdf";
 		
 		
@@ -20,7 +21,7 @@ public class PDFTransformerTest {
 		pdfXform.setTitle("Supported Platforms for Alfresco Enterprise 4.2.x");
 		String text = pdfXform.getText();
 		System.out.println(text);
-		
+		*/
 		
 		/*
 		PDDocument pdDoc = PDDocument.load(pdfDocument);

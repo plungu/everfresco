@@ -289,8 +289,16 @@ public class EverfrescoChannelType extends AbstractChannelType {
         } else if (originalMimeType.equalsIgnoreCase(APPLICATION_PDF)) {
         	
         	PDFTransformer pdfXform = new PDFTransformer();
-    		String pdfDocument = "/home/support/Downloads/Supported Platforms for Alfresco Enterprise 4.2.x.pdf";
-    		pdfXform.setDocument(pdfDocument);
+        	
+        	File file = new File("temp");
+        	reader.getContent(file);
+
+        	try {
+				pdfXform.setContent(file);
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
     		pdfXform.setTitle(title.toString());
     		
     		try {
@@ -302,7 +310,7 @@ public class EverfrescoChannelType extends AbstractChannelType {
 			            + "<en-note>" 
 			            + content
 			            + "</en-note>";
-				log.debug(enmlContent);
+				log.trace(enmlContent);
 			    note.setContent(enmlContent);
 			        
 			        
