@@ -28,13 +28,12 @@ public class EverfrescoModel {
 		EVERFRESCO_NAMESPACE, "nodeId");
 	public static final QName PROPERTY_EVERFRESCO_LAST_SYNC = QName.createQName(
 		EVERFRESCO_NAMESPACE, "lastSync");
-//	public static final QName PROPERTY_EVERFRESCO_SYNCED = QName.createQName(
-//		EVERFRESCO_NAMESPACE, "synced");
 	public static final QName PROPERTY_EVERFRESCO_CONSUMER_KEY = QName.createQName(
 		EVERFRESCO_NAMESPACE, "consumerKey");
 	public static final QName PROPERTY_EVERFRESCO_CONSUMER_SECRET = QName.createQName(
 		EVERFRESCO_NAMESPACE, "consumerSecret");	
 	public static final QName PROPERTY_EVERFRESCO_USE_SANDBOX = QName.createQName(
 			EVERFRESCO_NAMESPACE, "useSandbox");	
-	
+	public static final QName PROPERTY_EVERFRESCO_DEFAULT_CHANNEL = QName.createQName(
+			EVERFRESCO_NAMESPACE, "defaultChannel");	
 }

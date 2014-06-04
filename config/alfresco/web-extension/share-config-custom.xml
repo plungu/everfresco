@@ -63,11 +63,13 @@
 				   <show id="cm:name" />
 				   <show id="ef:consumerKey"/>
 				   <show id="ef:consumerSecret"/>
+				   <show id="ef:defaultChannel"/>
 				   <show id="ef:useSandbox"/>
 	           </field-visibility>
 	           <appearance> 				    
 		          <field id="ef:consumerKey"  label-id="ef.consumerKey"/>
 		          <field id="ef:consumerSecret"  label-id="ef.consumerSecret"/>
+		          <field id="ef:defaultChannel"  label-id="ef.defaultChannel"/>
 		          <field id="ef:useSandbox"  label-id="ef.useSandbox"/>
                </appearance>
           </form>

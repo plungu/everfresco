@@ -76,6 +76,11 @@
 			<property name="ef:consumerSecret">
 			    <type>d:text</type>
 			</property>
+
+	       	 <property name="ef:defaultChannel">
+				<type>d:boolean</type>
+				<default>false</default>
+			</property>
 				
 	       	 <property name="ef:useSandbox">
 				<type>d:boolean</type>
