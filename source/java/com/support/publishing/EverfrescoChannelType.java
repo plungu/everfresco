@@ -3,6 +3,8 @@ package com.support.publishing;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Serializable;
 import java.security.MessageDigest;
 import java.util.HashMap;
@@ -38,6 +40,7 @@ import com.evernote.edam.type.ResourceAttributes;
 import com.evernote.thrift.protocol.TBinaryProtocol;
 import com.evernote.thrift.transport.THttpClient;
 import com.support.model.EverfrescoModel;
+import com.support.transformation.PDFTransformer;
 
 public class EverfrescoChannelType extends AbstractChannelType {
 	
@@ -283,6 +286,32 @@ public class EverfrescoChannelType extends AbstractChannelType {
 	            + "</en-note>";
 	        note.setContent(enmlContent);
 	            
+        } else if (originalMimeType.equalsIgnoreCase(APPLICATION_PDF)) {
+        	
+        	PDFTransformer pdfXform = new PDFTransformer();
+    		String pdfDocument = "/home/support/Downloads/Supported Platforms for Alfresco Enterprise 4.2.x.pdf";
+    		pdfXform.setDocument(pdfDocument);
+    		
+    		try {
+				
+    			String text = pdfXform.getText();
+				String content = text;
+				String enmlContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+			            + "<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">"
+			            + "<en-note>" 
+			            + content
+			            + "</en-note>";
+			        note.setContent(enmlContent);
+			        
+			        
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        	
         } else {
         	
             File file = new File("temp");

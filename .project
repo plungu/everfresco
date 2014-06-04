@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>Supported Platforms for Alfresco Enterprise 4.2.x.pdf</name>
+			<type>1</type>
+			<location>/home/support/Downloads/Supported Platforms for Alfresco Enterprise 4.2.x.pdf</location>
+		</link>
+	</linkedResources>
 </projectDescription>
