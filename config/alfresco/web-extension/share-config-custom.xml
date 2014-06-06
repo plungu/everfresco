@@ -91,6 +91,8 @@
 		         <param name="successMessage">message.everfresco.sync.success</param>
 		         <param name="failureMessage">message.everfresco.sync.failure</param>
 		         <evaluator negate="true">support.evaluator.doclib.action.evernote</evaluator>
+		         <evaluator >support.evaluator.doclib.action.hasENchannel</evaluator>
+		         
 		      </action>
 		      
 		      <action id="support.doclib.action.everfresco.remove"

@@ -23,9 +23,12 @@
         </property>
     </bean>
    
-    <bean id="webframework.factory.user.everfresco" class="com.support.share.EverfrescoUserFactory" parent="webframework.factory.base" />
+    <bean id="webframework.factory.user.everfresco" class="com.support.share.EverfrescoUserFactory" 
+    	parent="webframework.factory.base" />
 	
 	<bean id="support.evaluator.doclib.action.evernote"          
 		class="com.support.evaluator.IsEvernoteSyncableEvaluator" />
-	
+
+	<bean id="support.evaluator.doclib.action.hasENchannel"          
+		class="com.support.evaluator.HasEvernoteChannelEvaluator" />	
 </beans>

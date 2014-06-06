@@ -12,7 +12,6 @@
 	<classpathentry kind="lib" path="lib/evernote-api-1.25.0.jar"/>
 	<classpathentry kind="lib" path="lib/libthrift.jar"/>
 	<classpathentry kind="lib" path="lib/scribe-1.3.5.jar"/>
-    <classpathentry kind="lib" path="lib/PDFToHTML.jar" />
-	<classpathentry kind="lib" path="/home/support/Development/WORKSPACES/alfresco4.1.3/libs/PDFToHTML.jar"/>
+	<classpathentry kind="lib" path="lib/PDFToHTML.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
