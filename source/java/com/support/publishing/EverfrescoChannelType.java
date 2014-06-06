@@ -117,6 +117,7 @@ public class EverfrescoChannelType extends AbstractChannelType {
 		Class providerClass = org.scribe.builder.api.EvernoteApi.Sandbox.class;
     	
     	String authorizationUrl = "";
+    	String requestToken = "";
     	
     	Serializable useSandbox = channel.getProperties().get(EverfrescoModel.PROPERTY_EVERFRESCO_USE_SANDBOX);
     	boolean useSandBox = Boolean.parseBoolean(useSandbox.toString());
@@ -127,7 +128,11 @@ public class EverfrescoChannelType extends AbstractChannelType {
 	    
 		    Serializable consumerKey = channel.getProperties().get(EverfrescoModel.PROPERTY_EVERFRESCO_CONSUMER_KEY);
 		    Serializable consumerSecret = channel.getProperties().get(EverfrescoModel.PROPERTY_EVERFRESCO_CONSUMER_SECRET);
-		    
+			if(consumerKey==null || consumerSecret==null)
+			{
+				log.debug("Consumer key and or consumer Secret is empty or null");
+			}
+			
 		    if ( (consumerKey != null || consumerSecret != null))
 		    { 
 			    log.info("consumer key: " + consumerKey);
@@ -144,7 +149,7 @@ public class EverfrescoChannelType extends AbstractChannelType {
 			log.info("****** Callback URL: "+callbackUrl);
 	
 			Token scribeRequestToken = service.getRequestToken();
-			String requestToken = scribeRequestToken.getToken();
+			requestToken = scribeRequestToken.getToken();
 			String requestTokenSecret = scribeRequestToken.getSecret();
 			
 			log.info("****** GetRequestToken: " + scribeRequestToken.getRawResponse() );
@@ -159,11 +164,16 @@ public class EverfrescoChannelType extends AbstractChannelType {
 	            
 	        }
 	        
-			// Send an OAuth message to the Provider asking to exchange the
-			// existing Request Token for an Access Token
-			authorizationUrl = authorizationUrlBase + "?oauth_token=" + requestToken;		          			          	
-			log.info("****** Redirecting to: " + authorizationUrl );
     	}
+		if(requestToken==null || requestToken.isEmpty())
+		{
+			log.debug("RequestToken is empty or null");
+		}
+		// Send an OAuth message to the Provider asking to exchange the
+		// existing Request Token for an Access Token
+		authorizationUrl = authorizationUrlBase + "?oauth_token=" + requestToken;		          			          	
+		log.info("****** Redirecting to: " + authorizationUrl );
+
 		return new AuthUrlPair(authorizationUrl, callbackUrl);
     }
     
