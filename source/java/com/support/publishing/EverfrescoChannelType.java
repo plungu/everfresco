@@ -7,7 +7,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.crypto.SealedObject;
 
@@ -286,7 +285,10 @@ public class EverfrescoChannelType extends AbstractChannelType {
         } else if (originalMimeType.equalsIgnoreCase(APPLICATION_MSWORD)) {
         	buildMSWordNote(reader, note, title.toString(), description.toString(), originalMimeType.toString());
 
-        } else {
+        } else if (originalMimeType.equalsIgnoreCase(MimetypeMap.MIMETYPE_OPENXML_WORDPROCESSING)) {
+        	buildDocxNote(reader, note, title.toString(), description.toString(), originalMimeType.toString());
+        	
+    	}	else {
         	buildAttachment(reader, originalMimeType.toString(), title.toString(), 
         			description.toString(), fileName.toString(), note);
         }
@@ -295,7 +297,9 @@ public class EverfrescoChannelType extends AbstractChannelType {
     }
     
 
-    protected void sendNote(Map channelProperties, Note note, NodeRef nodeToPublish)
+    
+
+	protected void sendNote(Map<?,?> channelProperties, Note note, NodeRef nodeToPublish)
     {
         // Finally, send the new note to Evernote using the createNote method
         // The new Note object that is returned will contain server-generated
@@ -391,6 +395,20 @@ public class EverfrescoChannelType extends AbstractChannelType {
         String enmlContent = PublishUtil.wrapContent(content);
         note.setContent(enmlContent);
     }
+    
+    private void buildDocxNote(ContentReader reader, Note note, String title,
+			String description, String mimeType) {
+		ContentWriter writer  = contentService.getTempWriter();
+		writer.setMimetype(MimetypeMap.MIMETYPE_WORD);
+		writer.setEncoding("UTF-8");
+		
+		ContentTransformer transformer = contentService.getTransformer(reader.getMimetype(), MimetypeMap.MIMETYPE_WORD);
+		transformer.transform(reader, writer);
+		
+		//String content = writer.getReader().getContentString();
+		
+		buildMSWordNote(writer.getReader(), note, title, description, mimeType);
+	}
 
     
     protected void buildAttachment(ContentReader reader, String originalMimeType, 
