@@ -3,16 +3,8 @@ package com.support.evaluator;
 import org.alfresco.error.AlfrescoRuntimeException;
 import org.alfresco.web.evaluator.BaseEvaluator;
 import org.apache.log4j.Logger;
-import org.json.JSONException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.springframework.extensions.surf.RequestContext;
-import org.springframework.extensions.surf.ServletUtil;
-import org.springframework.extensions.surf.exception.ConnectorServiceException;
-import org.springframework.extensions.surf.support.ThreadLocalRequestContext;
-import org.springframework.extensions.webscripts.Status;
-import org.springframework.extensions.webscripts.connector.Connector;
-import org.springframework.extensions.webscripts.connector.Response;
 
 /*
  * @IsEvernoteSyncableEvaluator

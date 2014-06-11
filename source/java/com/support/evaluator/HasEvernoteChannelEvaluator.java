@@ -4,7 +4,6 @@ import org.alfresco.error.AlfrescoRuntimeException;
 import org.alfresco.web.evaluator.BaseEvaluator;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.extensions.surf.RequestContext;
 import org.springframework.extensions.surf.ServletUtil;
@@ -23,8 +22,6 @@ import org.springframework.extensions.webscripts.connector.Response;
 public class HasEvernoteChannelEvaluator extends BaseEvaluator {
 	
 	private Logger log = Logger.getLogger(this.getClass()); 
-	private static final String ASPECT_EVERFRESCO = "ef:syncable";
-	
 	/*
 	 * @use determine if everfresco aspect has been applied. 
 	 * (non-Javadoc)
@@ -47,6 +44,7 @@ public class HasEvernoteChannelEvaluator extends BaseEvaluator {
 
 	}
 	
+	@SuppressWarnings("unused")
 	public final Boolean hasEvernoteChannels(final JSONObject actionObject)
 	{
  
