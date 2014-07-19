@@ -275,7 +275,8 @@ public class EverfrescoChannelType extends AbstractChannelType {
         log.debug("****** MimeType : " + originalMimeType );
         
         ContentReader reader = contentService.getReader(nodeToPublish, ContentModel.PROP_CONTENT);
-        if(originalMimeType.equalsIgnoreCase(TEXT_PLAIN)) 
+        if(originalMimeType.equalsIgnoreCase(MimetypeMap.MIMETYPE_TEXT_PLAIN) 
+        		|| originalMimeType.equalsIgnoreCase(MimetypeMap.MIMETYPE_HTML)) 
         {	
         	buildTextNote(reader, note);
 	            
@@ -381,10 +382,10 @@ public class EverfrescoChannelType extends AbstractChannelType {
     {
         // Perform transformation catering for mimetype AND encoding
         ContentWriter writer = contentService.getTempWriter();
-        writer.setMimetype(MimetypeMap.MIMETYPE_TEXT_PLAIN);
+        writer.setMimetype(MimetypeMap.MIMETYPE_HTML);
         writer.setEncoding("UTF-8");                            // Expect transformers to produce UTF-8
     	
-    	ContentTransformer transformer =  contentService.getTransformer(reader.getMimetype(), TEXT_PLAIN);
+    	ContentTransformer transformer =  contentService.getTransformer(reader.getMimetype(), MimetypeMap.MIMETYPE_HTML);
     	transformer.transform(reader, writer);
 		
     	String content = writer.getReader().getContentString();
